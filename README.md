@@ -382,11 +382,10 @@ io.use((socket, next) => {
 });
 ```
 
-## 📖 Extensions possibles
+## 📖 Extensions prévues
 
 - 🔌 Intégration avec des systèmes d'éclairage (DMX, OSC)
 - 📊 Dashboard de monitoring avancé
-- 📹 Capture d'écran des displays (streaming)
 - 🔊 Synchronisation audio
 - 🎨 Éditeur visuel de scènes
 - 🌐 Support mobile admin (Android, iOS)
@@ -399,10 +398,6 @@ Pour des questions ou bugs, consultez:
 - Les logs du serveur: `npm run dev`
 - Les DevTools de l'iPad (Chrome ou Safari)
 - La console du navigateur admin
-
-## 📄 Licence
-
-À définir selon vos besoins.
 
 ---
 
