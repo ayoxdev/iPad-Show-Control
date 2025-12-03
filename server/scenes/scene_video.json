@@ -1,0 +1,20 @@
+{
+  "id": "scene_video",
+  "label": "Écran Video",
+  "description": "Affiche un écran noir (transition ou pause)",
+  "duration": 2000,
+  "devices": {
+    "1": {
+      "type": "video",
+      "src": "/assets/fallback.svg"
+    },
+    "2": {
+      "type": "video",
+      "src": "/assets/fallback.svg"
+    },
+    "3": {
+      "type": "video",
+      "src": "/assets/videos/jupiter.mp4"
+    }
+  }
+}

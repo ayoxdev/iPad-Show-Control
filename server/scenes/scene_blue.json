@@ -1,0 +1,19 @@
+{
+  "id": "scene_blue",
+  "label": "Bleue",
+  "description": "Bleu",
+  "devices": {
+    "1": {
+      "type": "color",
+      "value": "#0000FF"
+    },
+    "2": {
+      "type": "color",
+      "value": "#0000FF"
+    },
+    "3": {
+      "type": "color",
+      "value": "#0000FF"
+    }
+  }
+}

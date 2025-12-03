@@ -1,0 +1,19 @@
+{
+  "id": "scene_black_screen",
+  "label": "Écran Noir",
+  "description": "Affiche un écran noir (transition ou pause)",
+  "devices": {
+    "1": {
+      "type": "color",
+      "value": "#000000"
+    },
+    "2": {
+      "type": "color",
+      "value": "#000000"
+    },
+    "3": {
+      "type": "color",
+      "value": "#000000"
+    }
+  }
+}

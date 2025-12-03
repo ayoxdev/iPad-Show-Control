@@ -1,0 +1,19 @@
+{
+  "id": "scene_opening",
+  "label": "Ouverture du spectacle",
+  "description": "Scène d'ouverture avec un dégradé noir vers blanc et du texte",
+  "devices": {
+    "1": {
+      "type": "text",
+      "value": "🎬\nSpectacle"
+    },
+    "2": {
+      "type": "color",
+      "value": "#1a1a1a"
+    },
+    "3": {
+      "type": "text",
+      "value": "▶\nCommence"
+    }
+  }
+}

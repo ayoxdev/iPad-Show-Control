@@ -1,0 +1,19 @@
+{
+  "id": "scene_red",
+  "label": "Rouge",
+  "description": "Affiche un fond rouge sur tous les écrans (effet alerte)",
+  "devices": {
+    "1": {
+      "type": "color",
+      "value": "#ff0000"
+    },
+    "2": {
+      "type": "color",
+      "value": "#ff0000"
+    },
+    "3": {
+      "type": "color",
+      "value": "#ff0000"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "devices": [
+    { "id": 1, "label": "Device 1", "description": "Écran gauche de la scène" },
+    { "id": 2, "label": "Device 2", "description": "Écran central de la scène" },
+    { "id": 3, "label": "Device 3", "description": "Écran droit de la scène" }
+  ],
+  "fallbackImage": "/assets/fallback.svg",
+  "connectionTimeout": null,
+  "pingInterval": 5000
+}

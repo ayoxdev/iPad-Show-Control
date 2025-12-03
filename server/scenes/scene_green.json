@@ -1,0 +1,19 @@
+{
+  "id": "scene_green",
+  "label": "Vert",
+  "description": "Transition simple avec fond bleu sur tous les écrans",
+  "devices": {
+    "1": {
+      "type": "color",
+      "value": "#00FF00"
+    },
+    "2": {
+      "type": "color",
+      "value": "#00FF00"
+    },
+    "3": {
+      "type": "color",
+      "value": "#00FF00"
+    }
+  }
+}

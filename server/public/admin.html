@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - iPad Show Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+            height: 100%;
+        }
+
+        body {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 0;
+        }
+
+        /* SIDEBAR - Devices */
+        .sidebar {
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: #4a9eff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .device-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .device-item {
+            background: #252525;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 3px solid #555;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .device-item.connected {
+            border-left-color: #4a9eff;
+            background: #1f2b3d;
+        }
+
+        .device-item:hover {
+            background: #2f2f2f;
+        }
+
+        .device-item.selected {
+            background: #4a9eff;
+            color: #000;
+        }
+
+        .device-info {
+            flex: 1;
+        }
+
+        .device-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .device-status {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+
+        .device-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #666;
+            margin-left: 1rem;
+        }
+
+        .device-item.connected .device-indicator {
+            background: #4a9eff;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* MAIN AREA */
+        .main {
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .main h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #fff;
+        }
+
+        /* SECTIONS */
+        .section {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #333;
+        }
+
+        .section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #4a9eff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* SCENES */
+        .scenes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .scene-button {
+            background: #252525;
+            border: 1px solid #444;
+            padding: 1rem;
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .scene-button:hover {
+            background: #4a9eff;
+            color: #000;
+            transform: translateY(-2px);
+        }
+
+        /* CUSTOM CONTENT */
+        .content-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #4a9eff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group select,
+        .form-group input {
+            background: #252525;
+            border: 1px solid #444;
+            padding: 0.75rem;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4a9eff;
+            background: #2f3a48;
+        }
+
+        /* BUTTONS */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #4a9eff;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: #5ba7ff;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #ff6666;
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        /* PREVIEW */
+        .preview {
+            background: #000;
+            border-radius: 6px;
+            width: 100%;
+            height: 200px;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .preview img,
+        .preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-placeholder {
+            color: #666;
+            text-align: center;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: #252525;
+            border-left: 3px solid #4a9eff;
+            padding: 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            body {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+
+            .sidebar {
+                max-height: 200px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .sidebar h2 {
+                grid-column: 1 / -1;
+            }
+
+            .main {
+                max-height: calc(100vh - 200px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- SIDEBAR - Liste des devices -->
+    <div class="sidebar">
+        <h2>📱 Devices</h2>
+        <div class="device-list" id="deviceList"></div>
+    </div>
+
+    <!-- MAIN AREA -->
+    <div class="main">
+        <h1>🎬 Show Control</h1>
+
+        <!-- SCENES -->
+        <div class="section">
+            <h3>⚡ Scènes préprogrammées</h3>
+            <div class="scenes-grid" id="scenesGrid"></div>
+            <button class="btn-secondary" onclick="reloadScenes()">🔄 Recharger les scènes</button>
+        </div>
+
+        <!-- EMERGENCY FALLBACK -->
+        <div class="section">
+            <h3>🚨 Contrôle global</h3>
+            <div class="button-group">
+                <button class="btn-danger" onclick="fallbackAll()">🛑 Tout vers FALLBACK</button>
+                <button class="btn-secondary" onclick="reloadDevices()">🔄 Actualiser les devices</button>
+            </div>
+        </div>
+
+        <!-- CUSTOM CONTENT -->
+        <div class="section">
+            <h3>✨ Envoyer du contenu personnalisé</h3>
+            <div class="info-box">
+                Sélectionnez un ou plusieurs devices et envoyez du contenu personnalisé en direct.
+            </div>
+
+            <div class="content-form">
+                <div class="form-group">
+                    <label>Type de contenu</label>
+                    <select id="contentType" onchange="updatePreview()">
+                        <option value="image">Image</option>
+                        <option value="video">Vidéo</option>
+                        <option value="color">Couleur</option>
+                        <option value="text">Texte</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="urlGroup">
+                    <label>URL (relatif ou absolu)</label>
+                    <input type="text" id="contentUrl" placeholder="/assets/image.png" onchange="updatePreview()" />
+                </div>
+
+                <div class="form-group" id="colorGroup" style="display: none;">
+                    <label>Couleur (hex)</label>
+                    <input type="color" id="colorValue" value="#000000" onchange="updatePreview()" />
+                </div>
+
+                <div class="form-group" id="textGroup" style="display: none;">
+                    <label>Texte</label>
+                    <input type="text" id="textValue" placeholder="Entrez le texte à afficher" />
+                </div>
+
+                <div class="preview" id="preview">
+                    <div class="preview-placeholder">Aperçu</div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="sendToSelected()">📤 Envoyer à la sélection</button>
+                    <button class="btn-secondary" onclick="clearSelection()">✕ Désélectionner</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEBUG -->
+        <div class="section" style="opacity: 0.6;">
+            <h3>🔧 Debug</h3>
+            <pre id="debugOutput"
+                style="background: #0f0f0f; padding: 1rem; border-radius: 4px; overflow-x: auto; max-height: 300px;"></pre>
+        </div>
+
+        <!-- FOOTER -->
+         <p>Site crée par <a href="https://ayox.dev/" style="color: white;">RIGOLET Ilïas</a></p>
+    </div>
+
+    <script>
+        /**
+         * ADMIN PANEL - Contrôle du système
+         * 
+         * Interface de gestion pour:
+         * - Voir l'état des devices
+         * - Déclencher des scènes
+         * - Envoyer du contenu personnalisé
+         */
+
+        // État global
+        let state = {
+            devices: {},
+            scenes: [],
+            selectedDeviceIds: new Set(),
+            currentContent: { type: 'image', url: '' },
+        };
+
+        // Charger Socket.IO
+        let scriptAdded = false;
+        if (!window.io) {
+            const script = document.createElement('script');
+            script.src = '/socket.io/socket.io.js';
+            script.onload = () => {
+                connectToServer();
+            };
+            document.head.appendChild(script);
+            scriptAdded = true;
+        } else {
+            connectToServer();
+        }
+
+        /**
+         * Connexion au serveur
+         */
+        function connectToServer() {
+            const socket = io(window.location.origin, {
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionAttempts: Infinity,
+            });
+
+            socket.on('connect', () => {
+                debug('✓ Connected to server');
+                loadInitialData();
+            });
+
+            socket.on('disconnect', () => {
+                debug('✗ Disconnected from server');
+            });
+
+            socket.on('device-status-update', (data) => {
+                debug(`Device ${data.deviceId} status: ${data.connected ? '✓ Connected' : '✗ Disconnected'}`);
+                state.devices[data.deviceId] = {
+                    ...state.devices[data.deviceId],
+                    connected: data.connected,
+                    label: data.label,
+                };
+                renderDeviceList();
+            });
+
+            // Récupérer les données initiales
+            async function loadInitialData() {
+                try {
+                    const devicesRes = await fetch('/api/devices');
+                    state.devices = await devicesRes.json();
+                    debug('Devices loaded: ' + Object.keys(state.devices).length);
+                    renderDeviceList();
+
+                    const scenesRes = await fetch('/api/scenes');
+                    state.scenes = await scenesRes.json();
+                    debug('Scenes loaded: ' + state.scenes.length);
+                    renderScenes();
+                } catch (err) {
+                    debug('❌ Error loading data: ' + err.message);
+                }
+            }
+
+            // Rendre le socket global
+            window.socket = socket;
+        }
+
+
+        /**
+         * Afficher la liste des devices
+         */
+        function renderDeviceList() {
+            const container = document.getElementById('deviceList');
+            container.innerHTML = '';
+
+            Object.entries(state.devices).forEach(([id, device]) => {
+                const div = document.createElement('div');
+                div.className = `device-item ${device.connected ? 'connected' : ''}`;
+                div.innerHTML = `
+          <div class="device-info">
+            <div class="device-label">${device.label || `Device ${id}`}</div>
+            <div class="device-status">${device.connected ? '🟢 Connecté' : '🔴 Déconnecté'}</div>
+          </div>
+          <div class="device-indicator"></div>
+        `;
+                div.onclick = () => toggleDeviceSelection(id, div);
+                container.appendChild(div);
+            });
+        }
+
+        /**
+         * Sélectionner/désélectionner un device
+         */
+        function toggleDeviceSelection(id, element) {
+            if (state.selectedDeviceIds.has(id)) {
+                state.selectedDeviceIds.delete(id);
+                element.classList.remove('selected');
+            } else {
+                state.selectedDeviceIds.add(id);
+                element.classList.add('selected');
+            }
+            debug(`Selected devices: ${Array.from(state.selectedDeviceIds).join(', ') || 'none'}`);
+        }
+
+        /**
+         * Afficher les scènes
+         */
+        function renderScenes() {
+            const container = document.getElementById('scenesGrid');
+            container.innerHTML = '';
+
+            state.scenes.forEach((scene) => {
+                const button = document.createElement('button');
+                button.className = 'scene-button';
+                button.textContent = scene.label || scene.id;
+                button.onclick = () => triggerScene(scene.id);
+                container.appendChild(button);
+            });
+        }
+
+        /**
+         * Déclencher une scène
+         */
+        async function triggerScene(sceneId) {
+            try {
+                debug(`Triggering scene: ${sceneId}`);
+                const res = await fetch(`/api/scene/${sceneId}`, { method: 'POST' });
+                const data = await res.json();
+                debug(`✓ Scene sent: ${sceneId}`);
+            } catch (err) {
+                debug(`❌ Error triggering scene: ${err.message}`);
+            }
+        }
+
+        /**
+         * Recharger les scènes
+         */
+        async function reloadScenes() {
+            try {
+                const res = await fetch('/api/scenes');
+                state.scenes = await res.json();
+                renderScenes();
+                debug(`✓ Scenes reloaded: ${state.scenes.length}`);
+            } catch (err) {
+                debug(`❌ Error reloading scenes: ${err.message}`);
+            }
+        }
+
+        /**
+         * Actualiser les devices
+         */
+        async function reloadDevices() {
+            try {
+                const res = await fetch('/api/devices');
+                state.devices = await res.json();
+                renderDeviceList();
+                debug('✓ Devices reloaded');
+            } catch (err) {
+                debug(`❌ Error reloading devices: ${err.message}`);
+            }
+        }
+
+        /**
+         * Fallback global
+         */
+        async function fallbackAll() {
+            try {
+                debug('🚨 Triggering fallback for ALL devices');
+                const res = await fetch('/api/all/fallback', { method: 'POST' });
+                if (res.ok) {
+                    debug('✓ Fallback sent to all devices');
+                }
+            } catch (err) {
+                debug(`❌ Error: ${err.message}`);
+            }
+        }
+
+        /**
+         * Mettre à jour le type de contenu
+         */
+        function updateContentType() {
+            const type = document.getElementById('contentType').value;
+            document.getElementById('urlGroup').style.display = type === 'image' || type === 'video' ? 'flex' : 'none';
+            document.getElementById('colorGroup').style.display = type === 'color' ? 'flex' : 'none';
+            document.getElementById('textGroup').style.display = type === 'text' ? 'flex' : 'none';
+            updatePreview();
+        }
+
+        /**
+         * Mettre à jour la prévisualisation
+         */
+        function updatePreview() {
+            const type = document.getElementById('contentType').value;
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+
+            switch (type) {
+                case 'image': {
+                    const url = document.getElementById('contentUrl').value;
+                    if (url) {
+                        const img = document.createElement('img');
+                        img.src = url;
+                        img.onerror = () => {
+                            preview.innerHTML = '<div class="preview-placeholder">❌ Erreur de chargement</div>';
+                        };
+                        preview.appendChild(img);
+                    } else {
+                        preview.innerHTML = '<div class="preview-placeholder">📸 Entrez une URL</div>';
+                    }
+                    break;
+                }
+                case 'video': {
+                    const url = document.getElementById('contentUrl').value;
+                    if (url) {
+                        const video = document.createElement('video');
+                        video.src = url;
+                        video.muted = true;
+                        preview.appendChild(video);
+                    } else {
+                        preview.innerHTML = '<div class="preview-placeholder">🎬 Entrez une URL</div>';
+                    }
+                    break;
+                }
+                case 'color': {
+                    const color = document.getElementById('colorValue').value;
+                    preview.style.backgroundColor = color;
+                    break;
+                }
+                case 'text': {
+                    const text = document.getElementById('textValue').value;
+                    preview.innerHTML = `<div style="color: white; font-size: 2rem; text-align: center;">${text || 'Aperçu texte'}</div>`;
+                    break;
+                }
+            }
+        }
+
+        /**
+         * Envoyer du contenu à la sélection
+         */
+        async function sendToSelected() {
+            if (state.selectedDeviceIds.size === 0) {
+                debug('❌ Aucun device sélectionné');
+                return;
+            }
+
+            const type = document.getElementById('contentType').value;
+            let content = { type };
+
+            switch (type) {
+                case 'image':
+                case 'video':
+                    content.src = document.getElementById('contentUrl').value;
+                    break;
+                case 'color':
+                    content.value = document.getElementById('colorValue').value;
+                    break;
+                case 'text':
+                    content.value = document.getElementById('textValue').value;
+                    break;
+            }
+
+            try {
+                debug(`📤 Sending content to ${state.selectedDeviceIds.size} device(s)`);
+                const res = await fetch('/api/content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        deviceIds: Array.from(state.selectedDeviceIds),
+                        content,
+                    }),
+                });
+                debug('✓ Content sent');
+            } catch (err) {
+                debug(`❌ Error: ${err.message}`);
+            }
+        }
+
+        /**
+         * Déselectionner tous les devices
+         */
+        function clearSelection() {
+            state.selectedDeviceIds.clear();
+            document.querySelectorAll('.device-item').forEach((el) => {
+                el.classList.remove('selected');
+            });
+            debug('Selection cleared');
+        }
+
+        /**
+         * Logging debug
+         */
+        const debugMessages = [];
+        function debug(msg) {
+            debugMessages.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`);
+            debugMessages.splice(50); // Keep last 50 messages
+            document.getElementById('debugOutput').textContent = debugMessages.join('\n');
+        }
+
+        // Initialiser le contenu
+        document.addEventListener('DOMContentLoaded', () => {
+            const contentTypeSelect = document.getElementById('contentType');
+            contentTypeSelect.addEventListener('change', updateContentType);
+            updateContentType();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+{
+  "id": "scene_trio_images",
+  "label": "Trio d'images",
+  "description": "Affiche trois images différentes sur les trois écrans",
+  "devices": {
+    "1": {
+      "type": "image",
+      "src": "/assets/images.png"
+    },
+    "2": {
+      "type": "image",
+      "src": "/assets/fallback.svg"
+    },
+    "3": {
+      "type": "video",
+      "src": "/assets/videos/jupiter.mp4"
+    }
+  }
+}

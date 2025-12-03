@@ -1,0 +1,18 @@
+{
+  "id": "scene_closed",
+  "label": "Closed",
+  "devices": {
+    "1": {
+      "type": "image",
+      "src": "/assets/images/close.jpg"
+    },
+    "2": {
+      "type": "image",
+      "src": "/assets/images/close.jpg"
+    },
+    "3": {
+      "type": "image",
+      "src": "/assets/images/close.jpg"
+    }
+  }
+}
