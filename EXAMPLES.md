@@ -315,8 +315,8 @@ import { Timeline } from './routes/timeline.js';
 const timeline = new Timeline(io);
 
 // Construire une timeline
-timeline.addScene('scene_opening', 5000);     // 5s
-timeline.addScene('scene_transition_blue', 8080); // 3s
+timeline.addScene('scene_opening', 5173);     // 5s
+timeline.addScene('scene_transition_blue', 5173); // 3s
 timeline.addScene('scene_red_alert', 10000);  // 10s
 
 app.post('/api/timeline/play', (req, res) => {
@@ -474,7 +474,7 @@ app.post('/api/webhook', (req, res) => {
 ### Appeler depuis un système externe
 
 ```bash
-curl -X POST http://localhost:8080/api/webhook \
+curl -X POST http://localhost:5173/api/webhook \
   -H "Content-Type: application/json" \
   -d '{
     "action": "trigger-scene",

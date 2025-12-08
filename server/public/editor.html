@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scene Editor - iPad Show Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+            height: 100%;
+        }
+
+        body {
+            display: grid;
+            grid-template-columns: 250px 1fr 350px;
+            gap: 0;
+        }
+
+        /* SIDEBAR - SCENES LIST */
+        .sidebar {
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .sidebar h2 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #4a9eff;
+            text-transform: uppercase;
+        }
+
+        .scenes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .scene-item {
+            background: #252525;
+            padding: 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            border-left: 3px solid #555;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .scene-item:hover {
+            background: #2f2f2f;
+        }
+
+        .scene-item.active {
+            background: #4a9eff;
+            color: #000;
+            border-left-color: #fff;
+        }
+
+        .btn-new-scene {
+            background: #4a9eff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 4px;
+            color: #000;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        /* MAIN EDITOR */
+        .main {
+            background: #0f0f0f;
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: #4a9eff;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: #4a9eff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            color: #000;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        /* EDITOR FORM */
+        .editor-form {
+            display: grid;
+            gap: 1.5rem;
+            max-width: 600px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #4a9eff;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background: #252525;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4a9eff;
+            background: #1f2b3d;
+        }
+
+        /* DEVICE CONFIGURATION */
+        .device-config {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .device-config h3 {
+            color: #4a9eff;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .device-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .device-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #252525;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .device-checkbox input {
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            padding: 0;
+        }
+
+        .device-checkbox:has(input:checked) {
+            background: #4a9eff;
+            color: #000;
+        }
+
+        .content-type-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-type-btn {
+            background: #333;
+            border: 2px solid #555;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .content-type-btn.active {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            color: #000;
+        }
+
+        /* PREVIEW */
+        .preview-panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .preview-panel h3 {
+            color: #4a9eff;
+            margin-bottom: 1rem;
+        }
+
+        .preview-box {
+            background: #252525;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 1rem;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .preview-color {
+            width: 100%;
+            height: 150px;
+            border-radius: 4px;
+        }
+
+        .preview-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: #999;
+        }
+
+        .preview-image,
+        .preview-video {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 4px;
+        }
+
+        /* RIGHT PANEL - QUICK ACTIONS */
+        .right-panel {
+            background: #1a1a1a;
+            border-left: 1px solid #333;
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .right-panel h3 {
+            color: #4a9eff;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            background: #252525;
+            border: 1px solid #444;
+            padding: 0.75rem;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #4a9eff;
+            color: #000;
+            border-color: #4a9eff;
+        }
+
+        .action-btn.danger {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .action-btn.danger:hover {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .json-output {
+            background: #252525;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 1rem;
+            font-size: 0.75rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #4a9eff;
+            margin-top: 1rem;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 1rem;
+            border-top: 1px solid #333;
+            background: #1a1a1a;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            body {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar,
+            .right-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>📋 Scenes</h2>
+        <div class="scenes-list" id="scenesList"></div>
+        <button class="btn-new-scene" onclick="createNewScene()">+ New Scene</button>
+    </div>
+
+    <!-- MAIN EDITOR -->
+    <div class="main">
+        <div class="header">
+            <h1 id="sceneTitle">Scene Editor</h1>
+            <div class="header-buttons">
+                <button class="btn btn-secondary" onclick="downloadJSON()">📥 Export JSON</button>
+                <button class="btn btn-secondary" onclick="previewScene()">👁️ Preview</button>
+                <button class="btn" onclick="saveScene()">💾 Save</button>
+            </div>
+        </div>
+
+        <!-- SCENE EDITOR FORM -->
+        <form class="editor-form" id="sceneForm">
+            <div class="form-group">
+                <label>Scene ID</label>
+                <input type="text" id="sceneId" placeholder="scene_my_scene" readonly />
+            </div>
+
+            <div class="form-group">
+                <label>Label</label>
+                <input type="text" id="sceneLabel" placeholder="My Custom Scene" />
+            </div>
+
+            <div class="form-group">
+                <label>Category</label>
+                <select id="sceneCategory">
+                    <option value="Contenu">Contenu</option>
+                    <option value="Transitions">Transitions</option>
+                    <option value="Début/Fin">Début/Fin</option>
+                    <option value="Tests">Tests</option>
+                    <option value="Autres">Autres</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="sceneDescription" placeholder="Describe what this scene does..."></textarea>
+            </div>
+
+            <!-- DEVICE CONFIGURATION -->
+            <div class="device-config">
+                <h3>Configure by Device</h3>
+
+                <div class="device-selector" id="deviceSelector"></div>
+
+                <div class="content-type-selector">
+                    <button type="button" class="content-type-btn active" onclick="setContentType('color')">
+                        🎨 Color
+                    </button>
+                    <button type="button" class="content-type-btn" onclick="setContentType('image')">
+                        🖼️ Image
+                    </button>
+                    <button type="button" class="content-type-btn" onclick="setContentType('video')">
+                        🎥 Video
+                    </button>
+                    <button type="button" class="content-type-btn" onclick="setContentType('text')">
+                        📝 Text
+                    </button>
+                </div>
+
+                <!-- CONTENT INPUTS -->
+                <div id="contentInputs">
+                    <!-- Dynamically populated based on content type -->
+                </div>
+
+                <button type="button" class="btn btn-secondary" onclick="applyToSelectedDevices()">
+                    Apply to Selected Devices
+                </button>
+            </div>
+
+            <!-- PREVIEW -->
+            <div class="preview-panel">
+                <h3>Preview</h3>
+                <div class="preview-box" id="preview"></div>
+            </div>
+        </form>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+        <h3>📊 Scene Data</h3>
+
+        <div class="quick-actions">
+            <button class="action-btn" onclick="duplicateScene()">📋 Duplicate</button>
+            <button class="action-btn" onclick="testScene()">🧪 Test</button>
+            <button class="action-btn danger" onclick="deleteScene()">🗑️ Delete</button>
+        </div>
+
+        <h3 style="margin-top: 2rem;">JSON Output</h3>
+        <div class="json-output" id="jsonOutput"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket = null;
+        let scenes = [];
+        let currentScene = null;
+        let currentContentType = 'color';
+        let selectedDevices = new Set();
+
+        // Initialize
+        function init() {
+            initSocket();
+            fetchScenes();
+        }
+
+        // Socket.IO connection
+        function initSocket() {
+            socket = io({
+                transports: ['websocket', 'polling']
+            });
+
+            socket.on('connect', () => {
+                console.log('Connected to server');
+            });
+
+            socket.on('scene-triggered', (data) => {
+                console.log('Scene triggered:', data);
+            });
+            socket.on('scenes-updated', () => {
+                console.log('Scenes updated on server, refreshing...');
+                fetchScenes();
+            });
+        }
+
+        // Fetch scenes
+        async function fetchScenes() {
+            try {
+                const res = await fetch('/api/scenes');
+                scenes = await res.json();
+                renderScenesList();
+            } catch (err) {
+                console.error('Failed to fetch scenes:', err);
+            }
+        }
+
+        // Fetch devices
+        async function fetchDevices() {
+            try {
+                const res = await fetch('/api/devices');
+                const devices = await res.json();
+                renderDeviceSelector(devices);
+            } catch (err) {
+                console.error('Failed to fetch devices:', err);
+            }
+        }
+
+        // Render scenes list
+        function renderScenesList() {
+            const list = document.getElementById('scenesList');
+            list.innerHTML = scenes.map(scene => `
+                <div class="scene-item ${currentScene?.id === scene.id ? 'active' : ''}" 
+                     onclick="loadScene('${scene.id}')">
+                    ${scene.label || scene.id}
+                </div>
+            `).join('');
+        }
+
+        // Render device selector
+        function renderDeviceSelector(devices) {
+            const selector = document.getElementById('deviceSelector');
+            selector.innerHTML = '';
+
+            Object.entries(devices).forEach(([id, device]) => {
+                const checkbox = document.createElement('label');
+                checkbox.className = 'device-checkbox';
+                checkbox.innerHTML = `
+                    <input type="checkbox" value="${id}" onchange="toggleDevice('${id}', this.checked)">
+                    <span>${device.label || id}</span>
+                `;
+                selector.appendChild(checkbox);
+            });
+        }
+
+        // Load scene
+        function loadScene(sceneId) {
+            currentScene = scenes.find(s => s.id === sceneId);
+            if (!currentScene) return;
+
+            document.getElementById('sceneId').value = currentScene.id;
+            document.getElementById('sceneLabel').value = currentScene.label || '';
+            document.getElementById('sceneCategory').value = currentScene.category || 'Autres';
+            document.getElementById('sceneDescription').value = currentScene.description || '';
+            document.getElementById('sceneTitle').textContent = `📝 ${currentScene.label || currentScene.id}`;
+
+            selectedDevices.clear();
+            Object.keys(currentScene.devices || {}).forEach(id => selectedDevices.add(id));
+            updateDeviceCheckboxes();
+
+            updateJSONOutput();
+            renderScenesList();
+        }
+
+        // Update JSON output
+        function updateJSONOutput() {
+            if (!currentScene) return;
+
+            const output = {
+                id: currentScene.id,
+                label: document.getElementById('sceneLabel').value,
+                category: document.getElementById('sceneCategory').value,
+                description: document.getElementById('sceneDescription').value,
+                devices: currentScene.devices || {}
+            };
+
+            document.getElementById('jsonOutput').textContent = JSON.stringify(output, null, 2);
+        }
+
+        // Toggle device
+        function toggleDevice(deviceId, checked) {
+            if (checked) {
+                selectedDevices.add(deviceId);
+            } else {
+                selectedDevices.delete(deviceId);
+            }
+        }
+
+        // Update device checkboxes
+        function updateDeviceCheckboxes() {
+            document.querySelectorAll('.device-checkbox input').forEach(checkbox => {
+                checkbox.checked = selectedDevices.has(checkbox.value);
+            });
+        }
+
+        // Set content type
+        function setContentType(type) {
+            currentContentType = type;
+
+            document.querySelectorAll('.content-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            renderContentInputs();
+        }
+
+        // Render content inputs
+        function renderContentInputs() {
+            const container = document.getElementById('contentInputs');
+
+            switch (currentContentType) {
+                case 'color':
+                    container.innerHTML = `
+                        <div class="form-group">
+                            <label>Color (hex)</label>
+                            <input type="color" id="contentValue" value="#000000" onchange="updatePreview()" />
+                        </div>
+                    `;
+                    break;
+
+                case 'image':
+                    container.innerHTML = `
+                        <div class="form-group">
+                            <label>Image URL</label>
+                            <input type="text" id="contentValue" placeholder="/assets/image.png" onchange="updatePreview()" />
+                        </div>
+                    `;
+                    break;
+
+                case 'video':
+                    container.innerHTML = `
+                        <div class="form-group">
+                            <label>Video URL</label>
+                            <input type="text" id="contentValue" placeholder="/assets/video.mp4" onchange="updatePreview()" />
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (ms)</label>
+                            <input type="number" id="contentDuration" placeholder="5000" />
+                        </div>
+                    `;
+                    break;
+
+                case 'text':
+                    container.innerHTML = `
+                        <div class="form-group">
+                            <label>Text</label>
+                            <textarea id="contentValue" placeholder="Enter text..." onchange="updatePreview()"></textarea>
+                        </div>
+                    `;
+                    break;
+            }
+
+            updatePreview();
+        }
+
+        // Update preview
+        function updatePreview() {
+            const value = document.getElementById('contentValue')?.value || '';
+            const preview = document.getElementById('preview');
+
+            switch (currentContentType) {
+                case 'color':
+                    preview.innerHTML = `<div class="preview-color" style="background-color: ${value}"></div>`;
+                    break;
+
+                case 'image':
+                    preview.innerHTML = value ? `<img src="${value}" class="preview-image" onerror="this.src='/assets/fallback.svg'" />` : 'Enter an image URL';
+                    break;
+
+                case 'video':
+                    preview.innerHTML = value ? `<video class="preview-video" controls><source src="${value}"></video>` : 'Enter a video URL';
+                    break;
+
+                case 'text':
+                    preview.innerHTML = `<div class="preview-text">${value || 'Enter text...'}</div>`;
+                    break;
+            }
+        }
+
+        // Apply to selected devices
+        function applyToSelectedDevices() {
+            if (!currentScene || selectedDevices.size === 0) return;
+
+            const value = document.getElementById('contentValue')?.value || '';
+            const duration = document.getElementById('contentDuration')?.value;
+
+            if (!currentScene.devices) {
+                currentScene.devices = {};
+            }
+
+            selectedDevices.forEach(deviceId => {
+                currentScene.devices[deviceId] = {
+                    type: currentContentType,
+                    src: currentContentType === 'color' ? undefined : value,
+                    value: currentContentType === 'color' ? value : undefined,
+                    duration: duration ? parseInt(duration) : undefined
+                };
+            });
+
+            updateJSONOutput();
+            alert('Applied to selected devices!');
+        }
+
+        // Save scene
+        async function saveScene() {
+            if (!currentScene) return;
+
+            currentScene.label = document.getElementById('sceneLabel').value;
+            currentScene.category = document.getElementById('sceneCategory').value;
+            currentScene.description = document.getElementById('sceneDescription').value;
+
+                try {
+                    const res = await fetch(`/api/scene/${currentScene.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(currentScene)
+                    });
+
+                    if (res.ok) {
+                        alert('✓ Scene saved!');
+                        fetchScenes();
+                    } else {
+                        const errText = await res.text();
+                        alert('Error saving scene: ' + errText);
+                    }
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+        }
+
+        // Create new scene
+        async function createNewScene() {
+            const id = 'scene_' + Date.now();
+            const newScene = {
+                id,
+                label: 'New Scene',
+                category: 'Autres',
+                description: '',
+                devices: {}
+            };
+
+            try {
+                const res = await fetch('/api/scenes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newScene)
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    // Refresh list and load new
+                    await fetchScenes();
+                    loadScene(newScene.id);
+                    alert('✓ Scene created');
+                } else {
+                    const txt = await res.text();
+                    alert('Error creating scene: ' + txt);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        // Duplicate scene
+        async function duplicateScene() {
+            if (!currentScene) return;
+
+            const newId = 'scene_' + Date.now();
+            const newScene = JSON.parse(JSON.stringify(currentScene));
+            newScene.id = newId;
+            newScene.label = newScene.label + ' (copy)';
+
+            try {
+                const res = await fetch('/api/scenes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newScene)
+                });
+
+                if (res.ok) {
+                    await fetchScenes();
+                    loadScene(newId);
+                    alert('✓ Scene duplicated');
+                } else {
+                    const txt = await res.text();
+                    alert('Error duplicating scene: ' + txt);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        // Delete scene
+        async function deleteScene() {
+            if (!currentScene || !confirm('Delete this scene?')) return;
+
+            try {
+                const res = await fetch(`/api/scene/${currentScene.id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    alert('✓ Scene deleted');
+                    currentScene = null;
+                    await fetchScenes();
+                    document.getElementById('sceneForm').reset();
+                } else {
+                    const txt = await res.text();
+                    alert('Error deleting scene: ' + txt);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        // Download JSON
+        function downloadJSON() {
+            if (!currentScene) return;
+
+            const blob = new Blob([JSON.stringify(currentScene, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentScene.id}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Preview scene
+        async function previewScene() {
+            if (!currentScene) return;
+
+            try {
+                const res = await fetch(`/api/scene/${currentScene.id}`, { method: 'POST' });
+                if (res.ok) {
+                    alert('✓ Scene previewed on all displays!');
+                } else {
+                    alert('Error previewing scene');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        // Test scene
+        function testScene() {
+            previewScene();
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            init();
+            fetchDevices();
+            renderContentInputs();
+        });
+    </script>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>Site crée par <a href="https://ayox.dev/" style="color: white;">RIGOLET Ilïas</a></p>
+    </div>
+</body>
+
+</html>

@@ -125,7 +125,7 @@ scenes/*.json  # Créer les scènes
 ### 3. Utilisation
 
 ```
-PC Browser: http://localhost:8080/admin
+PC Browser: http://localhost:5173/admin
              ↓
             (Cliquer sur scène)
              ↓
@@ -225,13 +225,13 @@ case 'mon_type':
 ### Local (développement)
 ```bash
 npm start
-# Accessible à http://localhost:8080
+# Accessible à http://localhost:5173
 ```
 
 ### LAN (spectacle)
 ```bash
 npm start
-# Accessible à http://192.168.x.x:8080 depuis les iPads
+# Accessible à http://192.168.x.x:5173 depuis les iPads
 ```
 
 ### Production (Internet)

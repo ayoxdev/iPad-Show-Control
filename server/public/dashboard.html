@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monitoring Dashboard - iPad Show Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+            height: 100%;
+        }
+
+        body {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #4a9eff;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 2rem;
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4a9eff;
+        }
+
+        .stat-detail {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        /* DEVICE CARDS */
+        .devices-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #4a9eff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .device-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .device-card.connected {
+            border-color: #4a9eff;
+            box-shadow: 0 0 10px rgba(74, 158, 255, 0.1);
+        }
+
+        .device-card.disconnected {
+            border-color: #ff6b6b;
+            opacity: 0.6;
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .device-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.connected {
+            background: #4a9eff;
+            color: #000;
+        }
+
+        .status-badge.disconnected {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.connected {
+            background: #4ade80;
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+        }
+
+        .status-indicator.disconnected {
+            background: #ef4444;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes pulse-red {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .device-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            color: #4a9eff;
+            font-weight: 600;
+        }
+
+        .info-value.secondary {
+            color: #fff;
+        }
+
+        .device-description {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+
+        /* CONNECTION CHART */
+        .chart-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        #connectionChart {
+            width: 100%;
+            height: 200px;
+            margin-top: 1rem;
+            background: #0f0f0f;
+            border-radius: 4px;
+        }
+
+        .device-selector {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .device-btn {
+            background: #333;
+            border: 1px solid #555;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .device-btn.active {
+            background: #4a9eff;
+            color: #000;
+            border-color: #4a9eff;
+        }
+
+        .device-btn:hover {
+            border-color: #4a9eff;
+        }
+
+        /* EVENTS LOG */
+        .events-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            padding: 0.75rem;
+            background: #252525;
+            border-left: 3px solid #333;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-item.connect {
+            border-left-color: #4a9eff;
+        }
+
+        .event-item.disconnect {
+            border-left-color: #ff6b6b;
+        }
+
+        .event-item.scene {
+            border-left-color: #4ade80;
+        }
+
+        .event-time {
+            color: #999;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .status-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #252525;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: #4a9eff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            color: #000;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 1rem;
+            border-top: 1px solid #333;
+            background: #1a1a1a;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .devices-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📊 Monitoring Dashboard</h1>
+        <p class="subtitle">Real-time monitoring of all display devices</p>
+
+        <!-- STATUS BAR -->
+        <div class="status-bar" id="statusBar">
+            <div class="status-bar-item">Loading devices...</div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="controls">
+            <button class="btn" onclick="refreshDashboard()">🔄 Refresh</button>
+            <button class="btn btn-secondary" onclick="clearEvents()">Clear Events</button>
+            <button class="btn btn-secondary" onclick="exportStats()">📥 Export</button>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Connected Devices</span>
+                <span class="stat-value" id="connectedCount">0</span>
+                <span class="stat-detail" id="connectedTime">Last update: now</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Devices</span>
+                <span class="stat-value" id="totalCount">0</span>
+                <span class="stat-detail">Configured devices</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Uptime</span>
+                <span class="stat-value" id="uptime">00:00:00</span>
+                <span class="stat-detail" id="uptimeMs">Server running</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Recent Scene</span>
+                <span class="stat-value" id="lastScene">-</span>
+                <span class="stat-detail" id="lastSceneTime">-</span>
+            </div>
+        </div>
+
+        <!-- DEVICES -->
+        <div class="devices-section">
+            <h2 class="section-title">📱 Display Devices</h2>
+            <div class="devices-grid" id="devicesGrid"></div>
+        </div>
+
+        <!-- LATENCY CHART -->
+        <div class="chart-section">
+            <h3 class="section-title">📊 Latency (Ping) by Device</h3>
+            <canvas id="connectionChart"></canvas>
+        </div>
+
+        <!-- EVENTS LOG -->
+        <div class="events-section">
+            <h3 class="section-title">📝 Events Log</h3>
+            <div class="events-list" id="eventsList"></div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket = null;
+        let startTime = Date.now();
+        let serverStartTime = null; // Will be fetched from /api/status
+        let devicesState = {};
+        let eventsList = [];
+        let connectionHistory = {}; // { deviceId: [true/false, ...] }
+        let lastSceneId = null;
+        let lastSceneTimestamp = null;
+        const colors = ['#4a9eff', '#4ade80', '#fbbf24', '#f87171', '#a78bfa', '#06b6d4', '#ec4899', '#8b5cf6'];
+
+        // Initialize socket connection
+        function initSocket() {
+            socket = io({
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
+                reconnectionAttempts: Infinity,
+            });
+
+            socket.on('connect', () => {
+                addEvent('🔗 Dashboard connected to server', 'connect');
+                console.log('✓ Socket.IO connected to dashboard');
+                fetchInitialData();
+            });
+
+            socket.on('disconnect', () => {
+                addEvent('❌ Dashboard disconnected from server', 'disconnect');
+                console.log('✗ Socket.IO disconnected');
+            });
+
+            socket.on('device-status-update', (data) => {
+                console.log('📡 device-status-update received:', data);
+                devicesState = data;
+                recordConnectionHistory();
+                updateDeviceCards();
+                updateStats();
+                drawConnectionChart();
+            });
+
+            socket.on('scene-triggered', (data) => {
+                addEvent(`🎬 Scene: ${data.sceneId}`, 'scene');
+                // store and display recent scene
+                lastSceneId = data.sceneId || null;
+                lastSceneTimestamp = data.timestamp || Date.now();
+                updateRecentScene();
+                updateStats();
+
+                // Immediately refresh devicesState from server so device cards reflect the new scene
+                // This handles cases where device-status-update may not arrive or clients missed it
+                (async () => {
+                    try {
+                        const res = await fetch('/api/devices');
+                        const devices = await res.json();
+                        devicesState = devices;
+                        recordConnectionHistory();
+                        updateDeviceCards();
+                        updateStats();
+                        drawConnectionChart();
+                        addEvent('🔁 Devices refreshed after scene trigger', 'info');
+                    } catch (err) {
+                        console.warn('Failed to refresh devices after scene-triggered:', err);
+                    }
+                })();
+            });
+
+            socket.on('error', (error) => {
+                addEvent(`⚠️ Error: ${error}`, 'disconnect');
+                console.error('Socket.IO error:', error);
+            });
+        }
+
+        // Fetch initial data
+        async function fetchInitialData() {
+            try {
+                const [devicesRes, scenesRes, statusRes] = await Promise.all([
+                    fetch('/api/devices'),
+                    fetch('/api/scenes'),
+                    fetch('/api/status')
+                ]);
+
+                const devices = await devicesRes.json();
+                const scenes = await scenesRes.json();
+                let status = {};
+                try {
+                    status = await statusRes.json();
+                } catch (e) {
+                    console.warn('Could not parse /api/status response', e);
+                }
+
+                devicesState = devices;
+                // Store server start time so we can show server uptime
+                if (status && status.serverStartTime) {
+                    serverStartTime = status.serverStartTime;
+                }
+                // If server knows about a last scene (useful when dashboard missed socket event)
+                if (status && status.lastScene) {
+                    lastSceneId = status.lastScene;
+                    lastSceneTimestamp = status.lastSceneTime || Date.now();
+                    updateRecentScene();
+                    addEvent(`🎬 Recovered recent scene from server: ${lastSceneId}`, 'scene');
+                }
+
+                recordConnectionHistory();
+                updateDeviceCards();
+                updateStats();
+                drawConnectionChart();
+                addEvent(`📡 Initial data loaded: ${Object.keys(devices).length} devices`, 'connect');
+            } catch (err) {
+                addEvent(`❌ Failed to fetch data: ${err.message}`, 'disconnect');
+            }
+        }
+
+        // Record connection history
+        function recordConnectionHistory() {
+            Object.keys(devicesState).forEach((deviceId) => {
+                if (!connectionHistory[deviceId]) {
+                    connectionHistory[deviceId] = [];
+                }
+                const isConnected = devicesState[deviceId]?.isConnected || false;
+                connectionHistory[deviceId].push(isConnected);
+                // Keep only last 60 entries
+                if (connectionHistory[deviceId].length > 60) {
+                    connectionHistory[deviceId].shift();
+                }
+            });
+        }
+
+        // Draw latency chart showing current ping for each device
+        function drawConnectionChart() {
+            const canvas = document.getElementById('connectionChart');
+            const ctx = canvas.getContext('2d');
+            const deviceIds = Object.keys(devicesState).sort();
+
+            if (deviceIds.length === 0) return;
+
+            // Set canvas size
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 40;
+            
+            // Clear canvas
+            ctx.fillStyle = '#0f0f0f';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw title and setup
+            ctx.fillStyle = '#999';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText('Latency (ms)', padding, padding - 10);
+
+            // Bar chart setup
+            const barWidth = (width - padding * 2) / deviceIds.length;
+            const maxPing = 500; // max 500ms on chart
+            const graphHeight = height - padding * 2;
+
+            // Draw grid lines for latency scale
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            for (let i = 0; i <= 5; i++) {
+                const ms = (maxPing / 5) * i;
+                const y = height - padding - (graphHeight / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+                ctx.fillStyle = '#666';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'right';
+                ctx.fillText(`${Math.round(ms)}ms`, padding - 5, y + 3);
+            }
+            ctx.setLineDash([]);
+
+            // Draw axes
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.stroke();
+
+            // Draw bars for each device
+            deviceIds.forEach((deviceId, idx) => {
+                const device = devicesState[deviceId];
+                const ping = device?.ping;
+                const isConnected = device?.isConnected || false;
+                const color = colors[idx % colors.length];
+
+                const x = padding + idx * barWidth + barWidth * 0.1;
+                
+                // Only draw bar if ping has been measured
+                if (ping !== null && ping !== undefined) {
+                    const barHeight = (Math.min(ping, maxPing) / maxPing) * graphHeight;
+                    const y = height - padding - barHeight;
+
+                    // Draw bar
+                    ctx.fillStyle = isConnected ? color : '#666';
+                    ctx.fillRect(x, y, barWidth * 0.8, barHeight);
+
+                    // Draw border
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x, y, barWidth * 0.8, barHeight);
+
+                    // Draw ping value on top of bar
+                    ctx.fillStyle = isConnected ? '#4ade80' : '#ef4444';
+                    ctx.font = 'bold 10px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`${ping}ms`, x + barWidth * 0.4, y - 5);
+                } else {
+                    // Draw placeholder for devices without ping measurement
+                    ctx.fillStyle = '#333';
+                    ctx.strokeStyle = '#555';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x, height - padding - 30, barWidth * 0.8, 30);
+                    ctx.fillStyle = '#666';
+                    ctx.font = 'bold 10px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('--', x + barWidth * 0.4, height - padding - 8);
+                }
+
+                // Draw label
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 11px monospace';
+                ctx.textAlign = 'center';
+                const label = device?.label || `Device ${deviceId}`;
+                ctx.fillText(label, x + barWidth * 0.4, height - padding + 15);
+            });
+        }
+
+        // Update device cards
+        function updateDeviceCards() {
+            const grid = document.getElementById('devicesGrid');
+            grid.innerHTML = '';
+
+            Object.keys(devicesState).forEach((deviceId) => {
+                const device = devicesState[deviceId];
+                const isConnected = device?.isConnected || false;
+
+                const card = document.createElement('div');
+                card.className = `device-card ${isConnected ? 'connected' : 'disconnected'}`;
+
+                const timeSinceUpdate = device?.lastUpdate ? formatTime(Date.now() - device.lastUpdate) : 'never';
+
+                card.innerHTML = `
+                    <div class="device-header">
+                        <div class="device-title">
+                            <span class="status-indicator ${isConnected ? 'connected' : 'disconnected'}"></span>
+                            ${device?.label || deviceId}
+                        </div>
+                        <span class="status-badge ${isConnected ? 'connected' : 'disconnected'}">
+                            ${isConnected ? '🟢 Connected' : '🔴 Disconnected'}
+                        </span>
+                    </div>
+                    <div class="device-description">${device?.description || 'No description'}</div>
+                    <div class="device-info">
+                        <div class="info-item">
+                            <span class="info-label">Device ID</span>
+                            <span class="info-value secondary">${deviceId}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Last Update</span>
+                            <span class="info-value">${timeSinceUpdate}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Last Scene</span>
+                            <span class="info-value secondary">${device?.lastScene || '-'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Connected Duration</span>
+                            <span class="info-value">${device?.isConnected ? formatTime(device?.connectedDuration || 0) : '-'}</span>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        // Update stats
+        function updateStats() {
+            const total = Object.keys(devicesState).length;
+            const connected = Object.values(devicesState).filter(d => d?.isConnected).length;
+
+            document.getElementById('connectedCount').textContent = connected;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('connectedTime').textContent = `Last update: ${new Date().toLocaleTimeString()}`;
+
+            // Uptime: show server uptime, not page uptime
+            if (serverStartTime) {
+                const serverUptime = Date.now() - serverStartTime;
+                document.getElementById('uptime').textContent = formatTime(serverUptime);
+            } else {
+                // Fallback to page uptime if server start time not yet loaded
+                const uptime = Date.now() - startTime;
+                document.getElementById('uptime').textContent = formatTime(uptime);
+            }
+
+            // Update status bar
+            updateStatusBar();
+            // Ensure recent scene is shown
+            updateRecentScene();
+        }
+
+        // Update Recent Scene display
+        function updateRecentScene() {
+            const lastSceneEl = document.getElementById('lastScene');
+            const lastSceneTimeEl = document.getElementById('lastSceneTime');
+
+            if (lastSceneId) {
+                lastSceneEl.textContent = lastSceneId;
+                const t = lastSceneTimestamp ? new Date(lastSceneTimestamp) : new Date();
+                lastSceneTimeEl.textContent = t.toLocaleTimeString();
+            } else {
+                lastSceneEl.textContent = '-';
+                lastSceneTimeEl.textContent = '-';
+            }
+        }
+
+        // Update status bar
+        function updateStatusBar() {
+            const statusBar = document.getElementById('statusBar');
+            const deviceIds = Object.keys(devicesState).sort();
+
+            if (deviceIds.length === 0) {
+                statusBar.innerHTML = '<div class="status-bar-item">No devices configured</div>';
+                return;
+            }
+
+            statusBar.innerHTML = deviceIds.map(deviceId => {
+                const device = devicesState[deviceId];
+                const isConnected = device?.isConnected || false;
+                return `
+                    <div class="status-bar-item">
+                        <span class="status-indicator ${isConnected ? 'connected' : 'disconnected'}"></span>
+                        <strong>${device?.label || `Device ${deviceId}`}</strong>
+                        <span style="color: ${isConnected ? '#4ade80' : '#ef4444'};">
+                            ${isConnected ? 'Connected' : 'Disconnected'}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Add event
+        function addEvent(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            eventsList.unshift({ message, type, timestamp });
+            eventsList.splice(100); // Keep last 100 events
+
+            const list = document.getElementById('eventsList');
+            list.innerHTML = eventsList.map(e => `
+                <div class="event-item ${e.type}">
+                    <span>${e.message}</span>
+                    <span class="event-time">${e.timestamp}</span>
+                </div>
+            `).join('');
+        }
+
+        // Format time
+        function formatTime(ms) {
+            // Handle negative or invalid values
+            if (!ms || ms < 0) {
+                return '00:00:00';
+            }
+            const seconds = Math.floor((ms / 1000) % 60);
+            const minutes = Math.floor((ms / (1000 * 60)) % 60);
+            const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // Refresh dashboard
+        function refreshDashboard() {
+            fetchInitialData();
+        }
+
+        // Clear events
+        function clearEvents() {
+            eventsList = [];
+            document.getElementById('eventsList').innerHTML = '';
+            addEvent('📝 Events cleared', 'info');
+        }
+
+        // Export stats
+        function exportStats() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                uptime: Date.now() - startTime,
+                devices: devicesState,
+                events: eventsList
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dashboard-export-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            addEvent('📥 Stats exported', 'info');
+        }
+
+
+        // Auto-refresh every 2 seconds (stats, device cards, ping, chart)
+        setInterval(() => {
+            updateStats();
+            updateDeviceCards();
+            drawConnectionChart();
+        }, 2000);
+
+        // Update status bar every 500ms for real-time updates
+        setInterval(() => {
+            updateStatusBar();
+        }, 500);
+
+        // Fetch device status every 3 seconds as fallback (always update UI)
+        setInterval(async () => {
+            try {
+                const res = await fetch('/api/devices');
+                const devices = await res.json();
+                devicesState = devices;
+                recordConnectionHistory();
+                updateDeviceCards();
+                updateStats();
+                drawConnectionChart();
+                //console.log('Status updated via fallback fetch');
+            } catch (err) {
+                console.error('Fallback fetch error:', err);
+            }
+        }, 3000);
+
+        // Initialize
+        initSocket();
+    </script>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>Site crée par <a href="https://ayox.dev/" style="color: white;">RIGOLET Ilïas</a></p>
+    </div>
+</body>
+
+</html>

@@ -31,8 +31,8 @@ npm start
 ### Si EADDRINUSE (port déjà utilisé)
 
 ```bash
-# Trouver le processus utilisant le port 8080
-lsof -i :8080
+# Trouver le processus utilisant le port 5173
+lsof -i :5173
 
 # Tuer le processus (adaptez le PID)
 kill -9 12345
@@ -45,7 +45,7 @@ PORT: 3001
 
 ### PC (Admin)
 
-Ouvrir: http://localhost:8080
+Ouvrir: http://localhost:5173
 
 - [ ] Page d'accueil affichée avec bouttons
 - [ ] Admin Panel accessible
@@ -53,7 +53,7 @@ Ouvrir: http://localhost:8080
 
 ### iPad/Simulateur
 
-Ouvrir: http://votre-ip:8080/display/1
+Ouvrir: http://votre-ip:5173/display/1
 
 - [ ] Page display.html chargée
 - [ ] Statut bar affichée (haut de l'écran)
@@ -72,7 +72,7 @@ ipconfig
 
 ### 1. Admin Panel
 
-Accéder à: http://localhost:8080/admin
+Accéder à: http://localhost:5173/admin
 
 - [ ] Page charge correctement
 - [ ] Vous voyez "🎬 Show Control" en haut
@@ -197,7 +197,7 @@ console.log(window.socket.connected)  // Doit afficher: true
 ### iPad se déconnecte immédiatement
 
 - [ ] Vérifier que PC et iPad sont sur le même WiFi
-- [ ] Essayer directement l'IP (ex: http://192.168.1.10:8080)
+- [ ] Essayer directement l'IP (ex: http://192.168.1.10:5173)
 - [ ] Vérifier le firewall
 
 ### Service Worker ne se charge pas
@@ -210,7 +210,7 @@ console.log(window.socket.connected)  // Doit afficher: true
 
 ```bash
 # Vérifier l'API directement
-curl http://localhost:8080/api/scenes | jq
+curl http://localhost:5173/api/scenes | jq
 ```
 
 - [ ] L'API retourne au moins 6 scènes (les fichiers d'exemple)
@@ -238,7 +238,7 @@ curl http://localhost:8080/api/scenes | jq
 
 ## 📊 Monitoring
 
-Accéder à: http://localhost:8080/api/devices
+Accéder à: http://localhost:5173/api/devices
 
 - [ ] JSON valide retourné
 - [ ] Tous les devices listés

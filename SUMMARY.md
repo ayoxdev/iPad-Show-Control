@@ -73,10 +73,10 @@ npm start
 
 ### 3. Accéder à l'interface
 
-**PC**: http://localhost:8080/admin
-**iPad 1**: http://votre-ip:8080/display/1
-**iPad 2**: http://votre-ip:8080/display/2
-**iPad 3**: http://votre-ip:8080/display/3
+**PC**: http://localhost:5173/admin
+**iPad 1**: http://votre-ip:5173/display/1
+**iPad 2**: http://votre-ip:5173/display/2
+**iPad 3**: http://votre-ip:5173/display/3
 
 ### 4. Déclencher une scène
 

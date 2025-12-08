@@ -1,6 +1,7 @@
 {
   "id": "scene_white_screen",
   "label": "Écran Blanc",
+  "category": "Transitions",
   "description": "Affiche un écran blanc",
   "devices": {
     "1": {

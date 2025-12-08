@@ -221,16 +221,16 @@ iPad reconnects
 
 ```bash
 # Récupérer les devices
-curl http://localhost:8080/api/devices
+curl http://localhost:5173/api/devices
 
 # Récupérer les scènes
-curl http://localhost:8080/api/scenes
+curl http://localhost:5173/api/scenes
 
 # Déclencher une scène
-curl -X POST http://localhost:8080/api/scene/scene_opening
+curl -X POST http://localhost:5173/api/scene/scene_opening
 
 # Envoyer du contenu
-curl -X POST http://localhost:8080/api/content \
+curl -X POST http://localhost:5173/api/content \
   -H "Content-Type: application/json" \
   -d '{
     "deviceIds": [1],
@@ -245,7 +245,7 @@ curl -X POST http://localhost:8080/api/content \
 npm install -g wscat
 
 # Se connecter comme device
-wscat -c "ws://localhost:8080?deviceId=1"
+wscat -c "ws://localhost:5173?deviceId=1"
 
 # Maintenant vous pouvez émettre des événements
 > {"emit": "ping"}
@@ -301,7 +301,7 @@ app.get('/api/debug/connections', (req, res) => {
 
 2. **Redémarrer le serveur**
 
-3. **Accéder sur l'iPad:** http://votre-ip:8080/display/4
+3. **Accéder sur l'iPad:** http://votre-ip:5173/display/4
 
 ### Ajouter une scène
 
@@ -347,14 +347,14 @@ Dans `server/config.js`:
 ```javascript
 export const config = {
   // ...
-  FALLBACK_TIMEOUT: 60000, // Augmenter à 60 secondes
+  FALLBACK_TIMEOUT: 51730, // Augmenter à 60 secondes
 };
 ```
 
 Et dans `public/display.html`:
 
 ```javascript
-this.FALLBACK_TIMEOUT = 60000; // Doit correspondre
+this.FALLBACK_TIMEOUT = 51730; // Doit correspondre
 ```
 
 ## 🔐 Ajouter une authentification
@@ -410,13 +410,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
 COPY . .
-EXPOSE 8080
+EXPOSE 5173
 CMD ["npm", "start"]
 ```
 
 ```bash
 docker build -t ipad-spectacle .
-docker run -p 8080:8080 ipad-spectacle
+docker run -p 5173:5173 ipad-spectacle
 ```
 
 ### Systemd (Linux)

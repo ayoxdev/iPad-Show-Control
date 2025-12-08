@@ -32,8 +32,8 @@ Vous devriez voir:
 ```
 ╔════════════════════════════════════════════════╗
 ║  🎬 iPad Show Control Server              ║
-║  http://localhost:8080
-║  Admin: http://localhost:8080/admin
+║  http://localhost:5173
+║  Admin: http://localhost:5173/admin
 ╚════════════════════════════════════════════════╝
 ```
 
@@ -43,13 +43,13 @@ Vous devriez voir:
 
 ### Sur votre PC:
 
-**Admin Panel**: http://localhost:8080/admin
+**Admin Panel**: http://localhost:5173/admin
 
 ### Sur les iPads (ou simulateur):
 
-- **iPad 1**: http://votre-ip-pc:8080/display/1
-- **iPad 2**: http://votre-ip-pc:8080/display/2
-- **iPad 3**: http://votre-ip-pc:8080/display/3
+- **iPad 1**: http://votre-ip-pc:5173/display/1
+- **iPad 2**: http://votre-ip-pc:5173/display/2
+- **iPad 3**: http://votre-ip-pc:5173/display/3
 
 **Comment trouver votre IP PC?**
 
@@ -144,7 +144,7 @@ Vous pouvez forcer le fallback:
 
 ```bash
 # Vérifier que le serveur tourne
-curl http://localhost:8080
+curl http://localhost:5173
 
 # Si pas de réponse, redémarrer
 npm start
@@ -153,14 +153,14 @@ npm start
 ### Les iPads ne se connectent pas
 
 1. Vérifiez que PC et iPads sont sur le même WiFi
-2. Testez avec l'IP du PC (ex: `http://192.168.1.10:8080`)
-3. Vérifiez le firewall (port 8080 doit être accessible)
+2. Testez avec l'IP du PC (ex: `http://192.168.1.10:5173`)
+3. Vérifiez le firewall (port 5173 doit être accessible)
 
 ### Les scènes ne se chargent pas
 
 ```bash
 # Vérifier les scènes disponibles
-curl http://localhost:8080/api/scenes
+curl http://localhost:5173/api/scenes
 
 # Vérifier la syntaxe JSON de votre scène
 # (utilisez https://jsonlint.com/)

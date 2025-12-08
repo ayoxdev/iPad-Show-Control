@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +12,8 @@
       box-sizing: border-box;
     }
 
-    html, body {
+    html,
+    body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       color: #fff;
@@ -110,6 +112,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>🎬 iPad Show Control</h1>
@@ -117,28 +120,47 @@
 
     <div class="buttons">
       <a href="/admin" class="btn btn-admin">🎛️ Admin Panel</a>
-      <a href="/display/1" class="btn btn-display">📱 Display 1</a>
+      <a href="/mobile" class="btn btn-admin">📱 Mobile Control</a>
+      <a href="/dashboard" class="btn btn-admin">📊 Dashboard</a>
+      <a href="/editor" class="btn btn-admin">✏️ Scene Editor</a>
+      <a href="/display/1" class="btn btn-display">🖥️ Display 1</a>
     </div>
 
     <div class="info">
-      <h3>📋 Accès rapide</h3>
+      <h3>📋 Interfaces disponibles</h3>
       <ul>
-        <li><a href="/display/1" style="color: #4a9eff;">Display 1</a></li>
-        <li><a href="/display/2" style="color: #4a9eff;">Display 2</a></li>
-        <li><a href="/display/3" style="color: #4a9eff;">Display 3</a></li>
-        <li><a href="/api/devices" style="color: #4a9eff;">API: Devices</a></li>
-        <li><a href="/api/scenes" style="color: #4a9eff;">API: Scenes</a></li>
+        <li><a href="/admin" style="color: #4a9eff;">Admin Panel</a> - Contrôle complet avec clavier</li>
+        <li><a href="/mobile" style="color: #4a9eff;">Mobile Control</a> - Interface tactile optimisée</li>
+        <li><a href="/dashboard" style="color: #4a9eff;">Dashboard</a> - Monitoring en temps réel</li>
+        <li><a href="/editor" style="color: #4a9eff;">Scene Editor</a> - Créer/éditer des scènes</li>
+        <li><a href="/display/1" style="color: #4a9eff;">Display 1</a> - Écran iPad 1</li>
+        <li><a href="/display/2" style="color: #4a9eff;">Display 2</a> - Écran iPad 2</li>
+        <li><a href="/display/3" style="color: #4a9eff;">Display 3</a> - Écran iPad 3</li>
       </ul>
 
-      <h3 style="margin-top: 1rem;">🚀 Démarrage rapide</h3>
+      <h3 style="margin-top: 1rem;">🚀 Raccourcis clavier (Admin Panel)</h3>
       <ul>
-        <li>Accédez à <strong>/admin</strong> depuis votre PC</li>
-        <li>Ouvrez les URLs <strong>/display/1, /display/2, /display/3</strong> sur vos iPads</li>
-        <li>Déclenchez des scènes depuis le panel admin</li>
+        <li><strong>1-9</strong> - Déclencher les scènes 1-9</li>
+        <li><strong>T</strong> - Tester la synchronisation</li>
+        <li><strong>ESPACE</strong> - Fallback d'urgence</li>
       </ul>
-    </div><!-- FOOTER -->
-         <p>Site crée par <a href="https://ayox.dev/" style="color: white;">RIGOLET Ilïas</a></p>
+
+      <h3 style="margin-top: 1rem;">✨ Nouvelles fonctionnalités</h3>
+      <ul>
+        <li>📊 <strong>Dashboard:</strong> Monitoring des devices en temps réel</li>
+        <!-- Audio sync removed per user request -->
+        <li>✏️ <strong>Scene Editor:</strong> Créer des scènes visuellement</li>
+        <li>📱 <strong>Mobile Admin:</strong> Contrôle depuis un téléphone</li>
+        <li>🧪 <strong>Test Sync:</strong> Cycle automatique pour tester la synchronisation</li>
+        <li>⌨️ <strong>Raccourcis clavier:</strong> Déclencher rapidement les scènes</li>
+      </ul>
+    </div>
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>Site crée par <a href="https://ayox.dev/" style="color: white;">RIGOLET Ilïas</a></p>
+    </div>
   </div>
-  
+
 </body>
+
 </html>

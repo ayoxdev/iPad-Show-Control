@@ -1,6 +1,7 @@
 {
   "id": "scene_black_screen",
   "label": "Écran Noir",
+  "category": "Transitions",
   "description": "Affiche un écran noir (transition ou pause)",
   "devices": {
     "1": {

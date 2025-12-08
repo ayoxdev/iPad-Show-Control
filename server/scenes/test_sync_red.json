@@ -1,0 +1,11 @@
+{
+  "id": "test_sync_red",
+  "label": "🧪 Test - Rouge",
+  "category": "Tests",
+  "description": "Test de synchronisation - Affiche Rouge",
+  "devices": {
+    "1": { "type": "color", "value": "#ff0000" },
+    "2": { "type": "color", "value": "#ff0000" },
+    "3": { "type": "color", "value": "#ff0000" }
+  }
+}

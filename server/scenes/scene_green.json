@@ -1,6 +1,7 @@
 {
   "id": "scene_green",
   "label": "Vert",
+  "category": "Transitions",
   "description": "Transition simple avec fond bleu sur tous les écrans",
   "devices": {
     "1": {

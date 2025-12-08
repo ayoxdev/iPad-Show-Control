@@ -83,12 +83,12 @@
        └─ Installe les dépendances
 
   2️⃣  npm start
-       └─ Lance le serveur sur http://localhost:8080
+       └─ Lance le serveur sur http://localhost:5173
 
   3️⃣  Accédez aux interfaces:
-       ├─ Admin:   http://localhost:8080/admin
-       ├─ Display: http://votre-ip:8080/display/1
-       └─ Display: http://votre-ip:8080/display/2
+       ├─ Admin:   http://localhost:5173/admin
+       ├─ Display: http://votre-ip:5173/display/1
+       └─ Display: http://votre-ip:5173/display/2
 
 💡 PREMIERS TESTS
 ═════════════════════════════════════════════════════════════════════════════

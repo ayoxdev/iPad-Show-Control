@@ -1,6 +1,8 @@
 {
   "id": "scene_closed",
   "label": "Closed",
+  "category": "Début/Fin",
+  "description": "Scène de fermeture du spectacle",
   "devices": {
     "1": {
       "type": "image",

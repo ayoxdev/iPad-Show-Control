@@ -1,0 +1,11 @@
+{
+  "id": "test_sync_white",
+  "label": "🧪 Test - Blanc",
+  "category": "Tests",
+  "description": "Test de synchronisation - Affiche Blanc",
+  "devices": {
+    "1": { "type": "color", "value": "#ffffff" },
+    "2": { "type": "color", "value": "#ffffff" },
+    "3": { "type": "color", "value": "#ffffff" }
+  }
+}

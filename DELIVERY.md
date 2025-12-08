@@ -98,17 +98,17 @@ npm start
 ```
 ╔════════════════════════════════════════════════╗
 ║  🎬 iPad Show Control Server              ║
-║  http://localhost:8080
-║  Admin: http://localhost:8080/admin
+║  http://localhost:5173
+║  Admin: http://localhost:5173/admin
 ╚════════════════════════════════════════════════╝
 ```
 
 ### 3️⃣ Accéder aux interfaces
 
-- **PC Admin**: http://localhost:8080/admin
-- **iPad 1**: http://votre-ip:8080/display/1
-- **iPad 2**: http://votre-ip:8080/display/2
-- **iPad 3**: http://votre-ip:8080/display/3
+- **PC Admin**: http://localhost:5173/admin
+- **iPad 1**: http://votre-ip:5173/display/1
+- **iPad 2**: http://votre-ip:5173/display/2
+- **iPad 3**: http://votre-ip:5173/display/3
 
 ---
 

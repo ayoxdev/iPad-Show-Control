@@ -4,12 +4,12 @@
 
 export const config = {
   // Serveur
-  PORT: process.env.PORT || 8080,  // Port 8080
+  PORT: process.env.PORT || 5173,  // Port 5173
   HOST: '0.0.0.0',  // Écouter sur toutes les interfaces
 
   // WebSocket
   PING_INTERVAL: 500, // Ping toutes les 5 secondes
-  CONNECTION_TIMEOUT: 80800, // Timeout après 30 secondes
+  CONNECTION_TIMEOUT: 51730, // Timeout après 30 secondes
 
   // Paths
   DEVICES_CONFIG: './devices.json',
@@ -19,7 +19,7 @@ export const config = {
 
   // Fallback
   FALLBACK_IMAGE: '/assets/fallback.svg',
-  FALLBACK_TIMEOUT: 80800, // Fallback après 30s d'inactivité sur l'iPad
+  FALLBACK_TIMEOUT: 51730, // Fallback après 30s d'inactivité sur l'iPad
 
   // Logs
   DEBUG: process.env.DEBUG || false,

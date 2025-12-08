@@ -1,6 +1,7 @@
 {
   "id": "scene_trio_images",
   "label": "Trio d'images",
+  "category": "Contenu",
   "description": "Affiche trois images différentes sur les trois écrans",
   "devices": {
     "1": {

@@ -1,0 +1,11 @@
+{
+  "id": "test_sync_green",
+  "label": "🧪 Test - Vert",
+  "category": "Tests",
+  "description": "Test de synchronisation - Affiche Vert",
+  "devices": {
+    "1": { "type": "color", "value": "#00ff00" },
+    "2": { "type": "color", "value": "#00ff00" },
+    "3": { "type": "color", "value": "#00ff00" }
+  }
+}

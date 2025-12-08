@@ -1,7 +1,8 @@
 {
   "id": "scene_red",
   "label": "Rouge",
-  "description": "Affiche un fond rouge sur tous les écrans (effet alerte)",
+  "category": "Transitions",
+  "description": "Affiche un fond rouge sur tous les écrans",
   "devices": {
     "1": {
       "type": "color",

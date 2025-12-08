@@ -91,16 +91,37 @@
         }
 
         .device-indicator {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: #666;
+            background: #ef4444;
             margin-left: 1rem;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            animation: pulse-red 2s infinite;
         }
 
         .device-item.connected .device-indicator {
-            background: #4a9eff;
-            animation: pulse 1s infinite;
+            background: #4ade80;
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes pulse-red {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
         }
 
         @keyframes pulse {
@@ -146,11 +167,33 @@
         }
 
         /* SCENES */
+        .scenes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .scene-category {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .category-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #4a9eff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #333;
+        }
+
         .scenes-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 0;
         }
 
         .scene-button {
@@ -163,12 +206,41 @@
             transition: all 0.2s;
             font-weight: 500;
             text-align: center;
+            font-size: 0.9rem;
         }
 
         .scene-button:hover {
             background: #4a9eff;
             color: #000;
             transform: translateY(-2px);
+        }
+
+        .scene-button.active {
+            background: #4a9eff;
+            color: #000;
+            box-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
+        }
+
+        .test-sync-button {
+            background: linear-gradient(135deg, #ff9500, #ff6b00);
+            border: none;
+            padding: 1rem;
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .test-sync-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+        }
+
+        .test-sync-button:active {
+            transform: translateY(0);
         }
 
         /* CUSTOM CONTENT */
@@ -291,6 +363,16 @@
             line-height: 1.5;
         }
 
+        /* FOOTER */
+        .footer {
+            padding: 1rem;
+            border-top: 1px solid #333;
+            background: #1a1a1a;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 1024px) {
             body {
@@ -331,7 +413,13 @@
         <!-- SCENES -->
         <div class="section">
             <h3>⚡ Scènes préprogrammées</h3>
-            <div class="scenes-grid" id="scenesGrid"></div>
+            
+            <!-- TEST SYNC BUTTON -->
+            <button class="test-sync-button" onclick="startTestSync()">🧪 Tester la synchronisation</button>
+            
+            <!-- SCENES BY CATEGORY -->
+            <div class="scenes-container" id="scenesContainer"></div>
+            
             <button class="btn-secondary" onclick="reloadScenes()">🔄 Recharger les scènes</button>
         </div>
 
@@ -395,9 +483,7 @@
                 style="background: #0f0f0f; padding: 1rem; border-radius: 4px; overflow-x: auto; max-height: 300px;"></pre>
         </div>
 
-        <!-- FOOTER -->
-         <p>Site crée par <a href="https://ayox.dev/" style="color: white;">RIGOLET Ilïas</a></p>
-    </div>
+            </div>
 
     <script>
         /**
@@ -438,26 +524,35 @@
             const socket = io(window.location.origin, {
                 reconnection: true,
                 reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
                 reconnectionAttempts: Infinity,
+                transports: ['websocket', 'polling'],
             });
 
             socket.on('connect', () => {
                 debug('✓ Connected to server');
+                console.log('✓ Socket.IO connected');
                 loadInitialData();
             });
 
             socket.on('disconnect', () => {
                 debug('✗ Disconnected from server');
+                console.log('✗ Socket.IO disconnected');
             });
 
             socket.on('device-status-update', (data) => {
-                debug(`Device ${data.deviceId} status: ${data.connected ? '✓ Connected' : '✗ Disconnected'}`);
-                state.devices[data.deviceId] = {
-                    ...state.devices[data.deviceId],
-                    connected: data.connected,
-                    label: data.label,
-                };
+                console.log('📡 device-status-update received:', data);
+                // Update all devices from the full data object
+                Object.entries(data).forEach(([id, device]) => {
+                    state.devices[id] = device;
+                    debug(`Device ${id} status: ${device.isConnected ? '✓ Connected' : '✗ Disconnected'}`);
+                });
                 renderDeviceList();
+            });
+
+            socket.on('error', (error) => {
+                debug(`⚠️ Socket error: ${error}`);
+                console.error('Socket.IO error:', error);
             });
 
             // Récupérer les données initiales
@@ -490,12 +585,14 @@
             container.innerHTML = '';
 
             Object.entries(state.devices).forEach(([id, device]) => {
+                const isConnected = device?.isConnected || false;
                 const div = document.createElement('div');
-                div.className = `device-item ${device.connected ? 'connected' : ''}`;
+                div.className = `device-item ${isConnected ? 'connected' : ''}`;
+                div.id = `device-${id}`;
                 div.innerHTML = `
           <div class="device-info">
             <div class="device-label">${device.label || `Device ${id}`}</div>
-            <div class="device-status">${device.connected ? '🟢 Connecté' : '🔴 Déconnecté'}</div>
+            <div class="device-status">${isConnected ? '🟢 Connecté' : '🔴 Déconnecté'}</div>
           </div>
           <div class="device-indicator"></div>
         `;
@@ -519,18 +616,113 @@
         }
 
         /**
+         * Update device status every 500ms for real-time indicators
+         */
+        setInterval(() => {
+            Object.keys(state.devices).forEach((id) => {
+                const deviceEl = document.getElementById(`device-${id}`);
+                if (deviceEl) {
+                    const isConnected = state.devices[id]?.isConnected || false;
+                    if (isConnected && !deviceEl.classList.contains('connected')) {
+                        deviceEl.classList.add('connected');
+                    } else if (!isConnected && deviceEl.classList.contains('connected')) {
+                        deviceEl.classList.remove('connected');
+                    }
+                }
+            });
+        }, 500);
+
+        /**
+         * Fetch device status every 3 seconds as fallback
+         */
+        setInterval(async () => {
+            try {
+                const res = await fetch('/api/devices');
+                const devices = await res.json();
+                Object.entries(devices).forEach(([id, device]) => {
+                    if (state.devices[id]?.isConnected !== device.isConnected) {
+                        console.log(`Status changed for ${id}: ${device.isConnected}`);
+                        state.devices[id] = device;
+                        renderDeviceList();
+                    }
+                });
+            } catch (err) {
+                console.error('Fallback fetch error:', err);
+            }
+        }, 3000);
+
+        /**
          * Afficher les scènes
          */
         function renderScenes() {
-            const container = document.getElementById('scenesGrid');
+            const container = document.getElementById('scenesContainer');
             container.innerHTML = '';
 
+            // Group scenes by category
+            const scenesByCategory = {};
             state.scenes.forEach((scene) => {
-                const button = document.createElement('button');
-                button.className = 'scene-button';
-                button.textContent = scene.label || scene.id;
-                button.onclick = () => triggerScene(scene.id);
-                container.appendChild(button);
+                const category = scene.category || 'Autres';
+                if (!scenesByCategory[category]) {
+                    scenesByCategory[category] = [];
+                }
+                scenesByCategory[category].push(scene);
+            });
+
+            // Render categories in order
+            const categoryOrder = ['Début/Fin', 'Contenu', 'Transitions', 'Tests', 'Autres'];
+            categoryOrder.forEach((category) => {
+                if (scenesByCategory[category]) {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'scene-category';
+
+                    const titleDiv = document.createElement('div');
+                    titleDiv.className = 'category-title';
+                    titleDiv.textContent = category;
+                    categoryDiv.appendChild(titleDiv);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'scenes-grid';
+
+                    scenesByCategory[category].forEach((scene) => {
+                        const button = document.createElement('button');
+                        button.className = 'scene-button';
+                        button.textContent = scene.label || scene.id;
+                        button.title = scene.description || '';
+                        button.onclick = () => triggerScene(scene.id);
+                        grid.appendChild(button);
+                    });
+
+                    categoryDiv.appendChild(grid);
+                    container.appendChild(categoryDiv);
+                }
+            });
+
+            // Add any other categories not in the predefined list
+            Object.keys(scenesByCategory).forEach((category) => {
+                if (!categoryOrder.includes(category)) {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'scene-category';
+
+                    const titleDiv = document.createElement('div');
+                    titleDiv.className = 'category-title';
+                    titleDiv.textContent = category;
+                    categoryDiv.appendChild(titleDiv);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'scenes-grid';
+
+                    scenesByCategory[category].forEach((scene) => {
+                        const button = document.createElement('button');
+                        button.className = 'scene-button';
+                        button.textContent = scene.label || scene.id;
+                        button.title = scene.description || '';
+                        button.onclick = () => triggerScene(scene.id);
+                        grid.appendChild(button);
+                    });
+
+                    categoryDiv.appendChild(grid);
+                    container.appendChild(categoryDiv);
+                }
             });
         }
 
@@ -712,6 +904,55 @@
             document.getElementById('debugOutput').textContent = debugMessages.join('\n');
         }
 
+        /**
+         * Test synchronization - cycle through test scenes
+         */
+        async function startTestSync() {
+            debug('🧪 Starting synchronization test...');
+            const testScenes = ['test_sync_red', 'test_sync_green', 'test_sync_blue', 'test_sync_white', 'scene_black_screen'];
+            const interval = 2000; // 2 seconds per color
+
+            for (const sceneId of testScenes) {
+                await triggerScene(sceneId);
+                debug(`✓ Test scene: ${sceneId}`);
+                await new Promise(resolve => setTimeout(resolve, interval));
+            }
+
+            debug('✓ Test cycle complete!');
+        }
+
+        /**
+         * Keyboard shortcuts
+         */
+        document.addEventListener('keydown', (event) => {
+            // Skip if typing in an input
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA' || event.target.tagName === 'SELECT') {
+                return;
+            }
+
+            // Number keys (1-9) to trigger scenes
+            if (event.key >= '1' && event.key <= '9') {
+                const sceneIndex = parseInt(event.key) - 1;
+                if (state.scenes && state.scenes[sceneIndex]) {
+                    triggerScene(state.scenes[sceneIndex].id);
+                    debug(`⌨️  Keyboard: Scene #${event.key} triggered`);
+                }
+            }
+
+            // T for test sync
+            if (event.key === 't' || event.key === 'T') {
+                startTestSync();
+                debug('⌨️  Keyboard: Test sync started');
+            }
+
+            // Space for fallback
+            if (event.code === 'Space') {
+                event.preventDefault();
+                fallbackAll();
+                debug('⌨️  Keyboard: Fallback triggered');
+            }
+        });
+
         // Initialiser le contenu
         document.addEventListener('DOMContentLoaded', () => {
             const contentTypeSelect = document.getElementById('contentType');
@@ -719,6 +960,11 @@
             updateContentType();
         });
     </script>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>Site crée par <a href="https://ayox.dev/" style="color: white;">RIGOLET Ilïas</a></p>
+    </div>
 </body>
 
 </html>

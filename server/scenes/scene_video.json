@@ -1,6 +1,7 @@
 {
   "id": "scene_video",
   "label": "Écran Video",
+  "category": "Contenu",
   "description": "Affiche un écran noir (transition ou pause)",
   "duration": 2000,
   "devices": {

@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" id="themeColorMeta" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>iPad Display</title>
   <style>
     * {
@@ -93,7 +95,7 @@
     }
 
     .status-bar.connected {
-      background: rgba(0, 100, 0, 0);
+      background: #000;
     }
 
     .status-bar.disconnected {
@@ -142,6 +144,16 @@
       font-size: 2rem;
       text-align: center;
     }
+
+    /* FOOTER */
+        .footer {
+            padding: 1rem;
+            border-top: 1px solid #333;
+            background: #1a1a1a;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #666;
+        }
   </style>
 </head>
 <body>
@@ -189,7 +201,7 @@
 
         // Configuration
         this.FALLBACK_IMAGE = '/assets/fallback.svg';
-        this.FALLBACK_TIMEOUT = 80800; // 30 secondes
+        this.FALLBACK_TIMEOUT = 30000; // 30 secondes
         this.PING_INTERVAL = 5000; // 5 secondes
         this.CONNECTION_TIMEOUT = 10000; // 10 secondes
 
@@ -224,8 +236,11 @@
         // Se connecter au serveur
         this.connect();
 
-        // Pinger régulièrement
-        setInterval(() => this.ping(), this.PING_INTERVAL);
+        // Pinger régulièrement (avec délai initial pour laisser la socket se connecter)
+        setTimeout(() => {
+          console.log('🔍 Starting ping interval...');
+          setInterval(() => this.ping(), this.PING_INTERVAL);
+        }, 2000);
       }
 
       /**
@@ -254,25 +269,27 @@
        * Se connecter au serveur via WebSocket
        */
       connect() {
-        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-        const host = '172.20.10.2';
-        const port = window.location.port;
-        const url = `${protocol}://${host}:${port}?deviceId=${this.deviceId}`;
+        // Build the URL with deviceId as a query parameter to ensure the
+        // server receives it in `socket.handshake.query` regardless of
+        // client library options compatibility.
+        console.log('🔌 Connexion WebSocket à:', window.location.origin);
 
-        console.log('🔌 Connexion WebSocket à:', url);
-
+        // Use `auth` to pass deviceId (compat with newer Socket.IO clients)
         this.socket = io(window.location.origin, {
-          query: { deviceId: this.deviceId },
+          auth: { deviceId: this.deviceId },
           reconnection: true,
           reconnectionDelay: 1000,
-          reconnectionDelayMax: 5000,
+          reconnectionDelayMax: 5173,
           reconnectionAttempts: Infinity,
           transports: ['websocket', 'polling'],
         });
 
         // Événements
-        this.socket.on('connect', () => this.onConnected());
-        this.socket.on('disconnect', () => this.onDisconnected());
+        this.socket.on('connect', () => {
+          console.log('Socket connected:', this.socket.id);
+          this.onConnected();
+        });
+        this.socket.on('disconnect', (reason) => this.onDisconnected(reason));
         this.socket.on('content-update', (data) => this.onContentUpdate(data));
         this.socket.on('fallback', () => this.showFallback());
         this.socket.on('pong', () => this.onPong());
@@ -281,6 +298,22 @@
         this.socket.on('connect_error', (err) => {
           console.error('❌ Erreur connexion WebSocket:', err);
           this.updateStatus('disconnected', 'Erreur connexion');
+        });
+        this.socket.on('reconnect_attempt', (attempt) => {
+          console.log('🔁 Reconnect attempt', attempt);
+          this.updateStatus('disconnected', `Reconnect ${attempt}`);
+        });
+        this.socket.on('reconnect', (attempt) => {
+          console.log('✅ Reconnected after', attempt);
+          this.updateStatus('connected', 'Reconnected');
+        });
+        this.socket.on('reconnect_error', (err) => {
+          console.warn('⚠ Reconnect error', err);
+        });
+        this.socket.on('reconnect_failed', () => {
+          console.error('❌ Reconnect failed');
+          this.updateStatus('disconnected', 'Reconnect failed');
+          this.showFallback();
         });
         
         this.socket.on('error', (err) => {
@@ -297,15 +330,21 @@
         this.clearFallbackTimeout();
         clearTimeout(this.connectionTimeout);
         this.fallbackOverlay.classList.remove('active');
+        // Ensure browser top UI uses dark/black theme when connected
+        const meta = document.getElementById('themeColorMeta') || document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', '#000000');
       }
 
       /**
        * Déconnecté du serveur
        */
-      onDisconnected() {
-        console.log('✗ Disconnected from server');
+      onDisconnected(reason) {
+        console.log('✗ Disconnected from server', reason);
         this.updateStatus('disconnected', 'Déconnecté');
-        //this.activateFallbackTimeout();
+        // Show fallback immediately when disconnected
+        this.showFallback();
+        // Start a shorter fallback timeout if desired
+        this.activateFallbackTimeout();
       }
 
       /**
@@ -387,6 +426,14 @@
        */
       showFallback() {
         console.log('⚠ Showing fallback');
+        try {
+          // stop any playing media
+          const video = this.containerEl.querySelector('video');
+          if (video) {
+            video.pause();
+            video.src = '';
+          }
+        } catch (e) { /* ignore */ }
         this.displayImage(this.FALLBACK_IMAGE);
         this.fallbackOverlay.classList.add('active');
       }
@@ -413,11 +460,14 @@
       }
 
       /**
-       * Ping le serveur pour confirmer la connexion
+       * Ping le serveur pour confirmer la connexion et mesurer la latence
        */
       ping() {
         if (this.socket && this.socket.connected) {
-          this.socket.emit('ping');
+          const timestamp = Date.now();
+          console.log(`🔍 Sending ping-measure: timestamp=${timestamp} (socket.id=${this.socket.id})`);
+          // Send timestamp so server can calculate latency (ping)
+          this.socket.emit('ping-measure', timestamp);
         }
       }
 
@@ -435,6 +485,9 @@
         this.statusBar.className = `status-bar ${state}`;
         this.statusText.textContent = text;
         this.debugInfo.textContent = `Device ID: ${this.deviceId} | ${new Date().toLocaleTimeString()}`;
+        // Also reflect connection visually in theme color for some browsers
+        const meta = document.getElementById('themeColorMeta') || document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', state === 'connected' ? '#000000' : '#444444');
       }
     }
 
@@ -443,5 +496,10 @@
       new DisplayClient();
     });
   </script>
+
+  <!-- FOOTER -->
+    <div class="footer">
+      <p>Site crée par <a href="https://ayox.dev/" style="color: white;">RIGOLET Ilïas</a></p>
+    </div>
 </body>
 </html>

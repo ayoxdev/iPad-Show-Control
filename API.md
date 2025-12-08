@@ -5,13 +5,13 @@ Documentation complète des endpoints REST et WebSocket.
 ## Base URL
 
 ```
-http://localhost:8080
+http://localhost:5173
 ```
 
 ou
 
 ```
-http://votre-ip:8080
+http://votre-ip:5173
 ```
 
 ---
@@ -54,7 +54,7 @@ Retourne l'état de tous les devices connectés au serveur.
 **Exemple cURL:**
 
 ```bash
-curl http://localhost:8080/api/devices | jq
+curl http://localhost:5173/api/devices | jq
 ```
 
 ---
@@ -94,7 +94,7 @@ Retourne la liste de toutes les scènes disponibles.
 **Exemple cURL:**
 
 ```bash
-curl http://localhost:8080/api/scenes | jq
+curl http://localhost:5173/api/scenes | jq
 ```
 
 ---
@@ -110,7 +110,7 @@ Déclenche une scène complète. Envoie le contenu de chaque device défini dans
 **Request:**
 
 ```bash
-curl -X POST http://localhost:8080/api/scene/scene_opening
+curl -X POST http://localhost:5173/api/scene/scene_opening
 ```
 
 **Response:**
@@ -181,7 +181,7 @@ Content-Type: application/json
 **Exemple - Envoyer une image:**
 
 ```bash
-curl -X POST http://localhost:8080/api/content \
+curl -X POST http://localhost:5173/api/content \
   -H "Content-Type: application/json" \
   -d '{
     "deviceIds": [1],
@@ -195,7 +195,7 @@ curl -X POST http://localhost:8080/api/content \
 **Exemple - Envoyer du texte à tous les devices:**
 
 ```bash
-curl -X POST http://localhost:8080/api/content \
+curl -X POST http://localhost:5173/api/content \
   -H "Content-Type: application/json" \
   -d '{
     "deviceIds": [1, 2, 3],
@@ -209,7 +209,7 @@ curl -X POST http://localhost:8080/api/content \
 **Exemple - Envoyer une couleur:**
 
 ```bash
-curl -X POST http://localhost:8080/api/content \
+curl -X POST http://localhost:5173/api/content \
   -H "Content-Type: application/json" \
   -d '{
     "deviceIds": [2],
@@ -235,7 +235,7 @@ Force le fallback (image de secours) sur un device spécifique.
 **Request:**
 
 ```bash
-curl -X POST http://localhost:8080/api/content/1/fallback
+curl -X POST http://localhost:5173/api/content/1/fallback
 ```
 
 **Response:**
@@ -262,7 +262,7 @@ Force le fallback sur **TOUS** les devices.
 **Request:**
 
 ```bash
-curl -X POST http://localhost:8080/api/all/fallback
+curl -X POST http://localhost:5173/api/all/fallback
 ```
 
 **Response:**
@@ -456,16 +456,16 @@ app.use('/api/', limiter);
 
 ```bash
 # Lister les devices
-curl http://localhost:8080/api/devices | jq
+curl http://localhost:5173/api/devices | jq
 
 # Lister les scènes
-curl http://localhost:8080/api/scenes | jq '.[] | {id, label}'
+curl http://localhost:5173/api/scenes | jq '.[] | {id, label}'
 
 # Déclencher une scène
-curl -X POST http://localhost:8080/api/scene/scene_opening
+curl -X POST http://localhost:5173/api/scene/scene_opening
 
 # Envoyer du contenu
-curl -X POST http://localhost:8080/api/content \
+curl -X POST http://localhost:5173/api/content \
   -H "Content-Type: application/json" \
   -d '{"deviceIds":[1],"content":{"type":"color","value":"#ff0000"}}'
 ```
@@ -476,7 +476,7 @@ curl -X POST http://localhost:8080/api/content \
 import requests
 
 # Déclencher une scène
-response = requests.post('http://localhost:8080/api/scene/scene_opening')
+response = requests.post('http://localhost:5173/api/scene/scene_opening')
 print(response.json())
 
 # Envoyer du contenu
@@ -487,7 +487,7 @@ payload = {
     'value': 'Bonjour!'
   }
 }
-requests.post('http://localhost:8080/api/content', json=payload)
+requests.post('http://localhost:5173/api/content', json=payload)
 ```
 
 ### Avec JavaScript (Fetch)

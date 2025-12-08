@@ -12,8 +12,8 @@ npm install
 npm start
 
 # 3. Accéder à l'interface
-# PC (Admin):  http://localhost:8080/admin
-# iPad 1:      http://votre-ip:8080/display/1
+# PC (Admin):  http://localhost:5173/admin
+# iPad 1:      http://votre-ip:5173/display/1
 ```
 
 ✅ C'est fait! Allez déclencher une scène 🎉
@@ -50,12 +50,12 @@ Commencez par l'un de ces fichiers:
 
 ## 🎯 En 30 secondes
 
-1. **Admin Panel** (http://localhost:8080/admin)
+1. **Admin Panel** (http://localhost:5173/admin)
    - Liste des iPads
    - Boutons pour déclencher les scènes
    - Envoi de contenu en direct
 
-2. **Display (iPad)** (http://localhost:8080/display/1)
+2. **Display (iPad)** (http://localhost:5173/display/1)
    - Page plein écran
    - Affiche le contenu reçu
    - Se reconnecte automatiquement
@@ -111,7 +111,7 @@ Placez votre fichier dans `server/public/assets/` et créez une scène qui l'uti
 ifconfig | grep "inet " | grep -v 127.0.0.1
 
 # Sur les iPads, accédez à:
-http://192.168.x.x:8080/display/1
+http://192.168.x.x:5173/display/1
 ```
 
 ---
@@ -121,10 +121,10 @@ http://192.168.x.x:8080/display/1
 ```
 Serveur (Node.js + Express + Socket.IO)
     ↓
-    ├─ Admin Panel (http://localhost:8080/admin)
-    ├─ Display 1   (http://localhost:8080/display/1)
-    ├─ Display 2   (http://localhost:8080/display/2)
-    └─ Display 3   (http://localhost:8080/display/3)
+    ├─ Admin Panel (http://localhost:5173/admin)
+    ├─ Display 1   (http://localhost:5173/display/1)
+    ├─ Display 2   (http://localhost:5173/display/2)
+    └─ Display 3   (http://localhost:5173/display/3)
     ↓
     REST API (GET/POST /api/*)
     WebSocket (Socket.IO)
@@ -168,11 +168,11 @@ Serveur (Node.js + Express + Socket.IO)
 ### Les iPads ne se connectent pas
 - Vérifier que PC et iPads sont sur le même WiFi
 - Utiliser l'IP réelle (pas localhost)
-- Vérifier le firewall (port 8080)
+- Vérifier le firewall (port 5173)
 
 ### Scènes ne se chargent pas
 ```bash
-curl http://localhost:8080/api/scenes | jq
+curl http://localhost:5173/api/scenes | jq
 ```
 
 ### Voir les logs détaillés

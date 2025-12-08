@@ -1,6 +1,7 @@
 {
   "id": "scene_opening",
   "label": "Ouverture du spectacle",
+  "category": "Début/Fin",
   "description": "Scène d'ouverture avec un dégradé noir vers blanc et du texte",
   "devices": {
     "1": {

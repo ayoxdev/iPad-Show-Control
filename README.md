@@ -4,13 +4,23 @@ Système complet de contrôle d'iPads pour spectacles en temps réel. Tous les i
 
 ## 🎯 Caractéristiques
 
+### ⚡ Core Features
 - ✅ **WebSocket temps réel** - Communication instantanée entre serveur et iPads
 - ✅ **Scènes préprogrammées** - Déclenchez des configurations complexes en un clic
 - ✅ **Contenu personnalisé** - Envoyez des images, vidéos, couleurs ou texte à chaque iPad
 - ✅ **Fallback automatique** - Image de secours affichée en cas de perte de connexion
 - ✅ **Service Worker** - Cache local pour résilience maximale
-- ✅ **Admin panel** - Interface élégante pour gérer tous les devices
 - ✅ **Extensible** - Structure modulaire facile à adapter
+
+### 🚀 Advanced Features (NEW)
+- ✅ **📊 Dashboard Monitoring** - Surveillance en temps réel des devices et timeline
+- ✅ **📱 Mobile Admin** - Interface tactile optimisée pour smartphones/tablettes
+- ✅ **✏️ Scene Editor** - Créer et éditer des scènes visuellement sans JSON
+- ✅ **🎨 Scene Categorization** - Toutes les scènes organisées par catégorie
+- ✅ **⌨️ Keyboard Shortcuts** - Raccourcis rapides (1-9, T, SPACE)
+- ✅ **🧪 Test Sync** - Bouton pour tester la synchronisation automatiquement
+ - ✅ **🔊 Audio Sync API** - REMOVED (audio synchronization functionality has been removed)
+- ✅ **Admin Panel Enhanced** - Groupage par catégories et mise à jour en temps réel
 
 ## 📁 Structure du projet
 
@@ -20,18 +30,29 @@ Système complet de contrôle d'iPads pour spectacles en temps réel. Tous les i
 │   ├── index.js              # Serveur principal (Express + Socket.IO)
 │   ├── config.js             # Configuration centralisée
 │   ├── devices.json          # Configuration des devices
-│   ├── scenes/               # Scènes JSON préprogrammées
+│   ├── scenes/               # Scènes JSON préprogrammées (13 scènes)
 │   │   ├── scene_opening.json
 │   │   ├── scene_transition_blue.json
+│   │   ├── test_sync_red.json
+│   │   ├── test_sync_green.json
+│   │   ├── test_sync_blue.json
+│   │   ├── test_sync_white.json
 │   │   └── ...
 │   ├── assets/               # Images, vidéos (à remplir)
 │   └── public/               # Fichiers statiques servés
-│       ├── index.html        # Page d'accueil
-│       ├── display.html      # Page iPad
-│       ├── admin.html        # Panel admin
+│       ├── index.html        # Page d'accueil avec liens
+│       ├── display.html      # Page iPad (client display)
+│       ├── admin.html        # Panel admin (catégories, raccourcis, test sync)
+│       ├── mobile.html       # Admin mobile (NEW - interface tactile)
+│       ├── dashboard.html    # Dashboard monitoring (NEW - stats temps réel)
+│       ├── editor.html       # Scene editor (NEW - créer scènes visuellement)
 │       ├── sw.js             # Service Worker
 │       └── assets/           # Assets publics
 │           └── fallback.svg  # Image de fallback
+├── documentation/            # Documentation complète
+│   ├── FEATURES_UPDATE.md    # Nouvelles fonctionnalités
+│   ├── QUICK_REFERENCE.md    # Guide de référence rapide
+│   └── IMPLEMENTATION_SUMMARY.md
 ├── package.json              # Dépendances Node.js
 └── README.md                 # Ce fichier
 ```
@@ -67,17 +88,60 @@ npm run dev
 
 ## 📱 Utilisation
 
-### Sur votre PC (Admin Panel)
+### 🏠 Page d'accueil
+
+Accédez à: **http://localhost:8080**
+
+Vous trouverez des liens vers toutes les interfaces disponibles.
+
+### 🎛️ Admin Panel (Desktop)
 
 Accédez à: **http://localhost:8080/admin**
 
-Vous pouvez:
-- Voir l'état de tous les devices (connecté/déconnecté)
-- Déclencher des scènes préprogrammées
-- Envoyer du contenu personnalisé à des devices spécifiques
-- Forcer le fallback sur tous les devices
+Fonctionnalités:
+- ✅ Voir l'état de tous les devices (connecté/déconnecté)
+- ✅ Scènes groupées par catégories
+- ✅ Déclencher des scènes préprogrammées
+- ✅ Envoyer du contenu personnalisé à des devices spécifiques
+- ✅ Forcer le fallback sur tous les devices
+- ✅ **Raccourcis clavier**: 1-9 (scènes), T (test sync), SPACE (fallback)
 
-### Sur les iPads (Display)
+### 📱 Mobile Admin (NEW)
+
+Accédez à: **http://localhost:8080/mobile** sur téléphone/tablette
+
+Fonctionnalités:
+- ✅ Interface tactile optimisée
+- ✅ 3 tabs: Scenes, Devices, Control
+- ✅ Déclenchement rapide de scènes
+- ✅ Monitoring des devices
+- ✅ Envoi de contenu personnalisé
+- ✅ Bouton Emergency stop
+
+### 📊 Dashboard Monitoring (NEW)
+
+Accédez à: **http://localhost:8080/dashboard**
+
+Fonctionnalités:
+- ✅ Statistiques en temps réel (devices connectés, uptime, dernière scène)
+- ✅ Timeline de connexion (60 secondes)
+- ✅ Journal d'événements complet
+- ✅ Export des données (JSON)
+- ✅ Mise à jour automatique toutes les 5 secondes
+
+### ✏️ Scene Editor (NEW)
+
+Accédez à: **http://localhost:8080/editor**
+
+Fonctionnalités:
+- ✅ Créer de nouvelles scènes
+- ✅ Éditer les scènes existantes
+- ✅ Configurer le contenu par device
+- ✅ Aperçu en temps réel
+- ✅ Dupliquer/supprimer des scènes
+- ✅ Exporter en JSON
+
+### 📺 Sur les iPads (Display)
 
 Accédez à:
 - **iPad 1**: http://votre-pc:8080/display/1
@@ -85,10 +149,6 @@ Accédez à:
 - **iPad 3**: http://votre-pc:8080/display/3
 
 Les iPads se mettent automatiquement en plein écran et affichent le contenu reçu du serveur.
-
-### Page d'accueil
-
-Accédez à: **http://localhost:8080** pour voir les accès rapides
 
 ## ⚙️ Configuration
 
@@ -114,20 +174,21 @@ Dans `server/config.js`:
 ```javascript
 export const config = {
   PORT: 8080,                    // Port du serveur
+  HOST: '0.0.0.0',              // Écoute sur toutes les interfaces
   PING_INTERVAL: 5000,           // Ping toutes les 5s
-  CONNECTION_TIMEOUT: 80800,     // Timeout connexion après 30s
-  FALLBACK_TIMEOUT: 80800,       // Fallback après 30s d'inactivité
+  FALLBACK_TIMEOUT: 30000,       // Fallback après 30s d'inactivité
 };
 ```
 
 ## 📝 Format des scènes
 
-Une scène est un fichier JSON dans `server/scenes/`:
+Une scène est un fichier JSON dans `server/scenes/`. Toutes les scènes incluent maintenant un champ `category`:
 
 ```json
 {
   "id": "ma_scene",
   "label": "Ma Scène",
+  "category": "Contenu",
   "description": "Description optionnelle",
   "devices": {
     "1": {
@@ -146,6 +207,14 @@ Une scène est un fichier JSON dans `server/scenes/`:
   }
 }
 ```
+
+### Catégories disponibles
+
+- `Début/Fin` - Scènes d'ouverture et fermeture
+- `Contenu` - Images et vidéos
+- `Transitions` - Effets de transition
+- `Tests` - Tests de synchronisation
+- `Autres` - Autres scènes
 
 ### Types de contenu supportés
 
@@ -211,6 +280,41 @@ POST /api/all/fallback
 
 Force le fallback pour tous les devices.
 
+### 🔊 Audio Sync (NEW)
+
+```http
+POST /api/audio/sync
+{
+  "cueId": "cue_1",
+  "startTime": timestamp,
+  "duration": 30000
+}
+```
+
+Synchronise l'audio sur tous les devices.
+
+```http
+POST /api/audio/cue
+{
+  "cueId": "cue_1",
+  "deviceIds": ["1", "2", "3"],
+  "audioUrl": "/assets/audio.mp3",
+  "delay": 1000,
+  "autoPlay": true
+}
+```
+
+Envoie un cue audio à des devices spécifiques avec délai.
+
+```http
+POST /api/audio/stop
+{
+  "deviceIds": ["1", "2", "3"]
+}
+```
+
+Arrête la lecture audio.
+
 ## 🔄 Communication WebSocket
 
 Les clients iPad se connectent automatiquement au serveur via Socket.IO.
@@ -220,10 +324,15 @@ Les clients iPad se connectent automatiquement au serveur via Socket.IO.
 - `content-update` - Mise à jour du contenu
 - `fallback` - Forcer l'affichage du fallback
 - `pong` - Réponse au ping
+- `audio-sync` - Synchronisation audio (NEW)
+- `audio-cue` - Cue audio (NEW)
+- `audio-stop` - Arrêt audio (NEW)
 
 ### Événements client → serveur
 
 - `ping` - Vérifier la connexion
+- `device-status-update` - Diffusé à tous les clients pour synchronisation (NEW)
+- `scene-triggered` - Notifie le déclenchement d'une scène (NEW)
 
 ## 💾 Cache et persistance
 
@@ -296,7 +405,7 @@ Pour déployer en production:
 
 1. Vérifiez que le PC et les iPads sont sur le même réseau
 2. Testez: `ping votre-ip-pc` depuis l'iPad
-3. Vérifiez que le port 8080 n'est pas bloqué par le firewall
+3. Vérifiez que le port 5173 n'est pas bloqué par le firewall
 4. Essayez `npm run dev` et vérifiez les logs
 
 ### WebSocket n'établit pas la connexion
@@ -382,15 +491,41 @@ io.use((socket, next) => {
 });
 ```
 
-## 📖 Extensions prévues
+## 📖 Extensions possibles
 
 - 🔌 Intégration avec des systèmes d'éclairage (DMX, OSC)
-- 📊 Dashboard de monitoring avancé
-- 🔊 Synchronisation audio
-- 🎨 Éditeur visuel de scènes
-- 🌐 Support mobile admin (Android, iOS)
+- 📹 Capture d'écran des displays (streaming)
 - 💾 Logs persistants et historique
 - 🎬 Timeline de scènes automatisée
+- 🔐 Authentification utilisateur (JWT/OAuth)
+- 📈 Statistiques et analytique avancée
+
+## 📚 Documentation supplémentaire
+
+Consultez les fichiers de documentation dans le dossier `/documentation`:
+
+- **`FEATURES_UPDATE.md`** - Documentation complète des nouvelles fonctionnalités
+- **`QUICK_REFERENCE.md`** - Guide de référence rapide (raccourcis, APIs, URLs)
+- **`IMPLEMENTATION_SUMMARY.md`** - Résumé technique des implémentations
+
+## ⌨️ Raccourcis Clavier (Admin Panel)
+
+| Touche | Action |
+|--------|--------|
+| `1-9` | Déclenche les scènes 1-9 |
+| `T` | Lance le test de synchronisation |
+| `SPACE` | Fallback d'urgence (écran noir) |
+
+## 🧪 Bouton Test Sync
+
+Le bouton "🧪 Tester la synchronisation" déclenche automatiquement une séquence:
+1. **Rouge** (2 secondes)
+2. **Vert** (2 secondes)
+3. **Bleu** (2 secondes)
+4. **Blanc** (2 secondes)
+5. **Noir** (2 secondes)
+
+Utilisez ce test pour vérifier que tous les iPads sont synchronisés correctement.
 
 ## 📞 Support
 
@@ -398,6 +533,35 @@ Pour des questions ou bugs, consultez:
 - Les logs du serveur: `npm run dev`
 - Les DevTools de l'iPad (Chrome ou Safari)
 - La console du navigateur admin
+- La documentation dans `/documentation`
+
+## 🎓 Tutoriels rapides
+
+### Créer une nouvelle scène
+
+1. Accédez à `http://localhost:8080/editor`
+2. Cliquez sur "New Scene"
+3. Remplissez les métadonnées (label, catégorie, description)
+4. Sélectionnez les devices cibles
+5. Choisissez le type de contenu (couleur, image, vidéo, texte)
+6. Cliquez "Apply to Selected Devices"
+7. Cliquez "Save"
+
+### Tester une scène
+
+1. Depuis l'Admin Panel: cliquez sur le bouton de la scène
+2. Depuis le Mobile: tapez le bouton de la scène
+3. Depuis le Dashboard: vérifiez les mises à jour en temps réel
+
+### Utiliser les raccourcis clavier
+
+- Appuyez sur **1** pour déclencher la 1ère scène
+- Appuyez sur **T** pour lancer le test de sync
+- Appuyez sur **SPACE** pour un fallback d'urgence
+
+## 📄 Licence
+
+À définir selon vos besoins.
 
 ---
 

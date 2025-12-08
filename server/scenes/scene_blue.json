@@ -1,6 +1,7 @@
 {
   "id": "scene_blue",
   "label": "Bleue",
+  "category": "Transitions",
   "description": "Bleu",
   "devices": {
     "1": {

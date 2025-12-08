@@ -6,5 +6,5 @@
   ],
   "fallbackImage": "/assets/fallback.svg",
   "connectionTimeout": null,
-  "pingInterval": 5000
+  "pingInterval": 5173
 }
