@@ -559,10 +559,6 @@ Pour des questions ou bugs, consultez:
 - Appuyez sur **T** pour lancer le test de sync
 - Appuyez sur **SPACE** pour un fallback d'urgence
 
-## 📄 Licence
-
-À définir selon vos besoins.
-
 ---
 
 **Bon spectacle! 🎭**
